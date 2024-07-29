@@ -402,7 +402,7 @@ const TableP = ({ fields, idSheet, idDaily }) => {
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
-        Crear nueva columna
+        Crear Otra Fila
       </Button>
     ),
     state: {
