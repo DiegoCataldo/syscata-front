@@ -20,7 +20,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [steps, setSteps] = useState([]);
 
 
-  const { id } = useParams();
+  const { id, contract_id } = useParams()
 
   const totalSteps = () => {
     return steps.length;

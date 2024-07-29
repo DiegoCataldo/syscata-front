@@ -7,10 +7,13 @@ import {
 import {
   Box,
   Button,
+  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   IconButton,
+  MenuItem,
+  Select,
   Tooltip,
 } from '@mui/material';
 import {
@@ -26,8 +29,15 @@ import axios from 'axios';
 import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
 
-const TableP = ({ fields, idSheet, idDaily }) => {
+const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const [validationErrors, setValidationErrors] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [availableDailys, setAvailableDailys] = useState([]);
+  const [selectedDaily, setSelectedDaily] = useState('');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  
+
 
   //estas variables son para guardar valores temporales principalmente para la funcion de hh trabajadas
   const [rowValuesTemp, setRowValuesTemp] = useState({});
@@ -85,6 +95,39 @@ const TableP = ({ fields, idSheet, idDaily }) => {
         };
       });
   }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable]);
+
+  const handleOpenModal = async () => {
+    await fetchDailys();
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const fetchDailys = async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
+      setAvailableDailys(response.data.data);
+  } catch (error) {
+      console.error('Error al obtener los Dailys:', error);
+  }
+    
+  };
+
+  const handleSelectDaily = async (selectedDaily, idDaily) => {
+    try {
+      const copyResponse = await axios.post(`${BASE_URL}/copyValuesRow`, {
+        selectedDaily: selectedDaily,
+        idDaily: idDaily,
+      });
+      queryClient.invalidateQueries(['fields']); 
+      setIsModalOpen(false);
+    } catch (error) {
+        console.error('Error al obtener los datos:', error);
+    }
+};
+
 
 
   // Función para manejar el cambio en "HH trabajadas"
@@ -401,9 +444,15 @@ const TableP = ({ fields, idSheet, idDaily }) => {
       </div>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
-        Crear Otra Fila
-      </Button>
+      <Box sx={{ display: 'flex', gap: '1rem' }}>
+        <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
+          Crear nueva columna
+        </Button>
+        <Button variant="contained" color="secondary" onClick={handleOpenModal}>
+          Precargar Data de un DR  anterior
+        </Button>
+      </Box>
+
     ),
     state: {
       isLoading: isLoadingUsers,
@@ -429,7 +478,34 @@ const TableP = ({ fields, idSheet, idDaily }) => {
   }, [table.getState().columnFilters, fetchedData.rows]);
 
 
-  return <MaterialReactTable table={table} />;
+  return(
+    <> 
+  <MaterialReactTable table={table} />
+  <Dialog open={isModalOpen} onClose={handleCloseModal}>
+        <DialogTitle>Seleccione una Daily</DialogTitle>
+        <DialogContent>
+          <Select
+            value={selectedDaily}
+            onChange={(e) => setSelectedDaily(e.target.value)}
+            fullWidth
+          >
+            {availableDailys.map((daily) => (
+              <MenuItem key={daily.id} value={daily.id}>
+                {daily.date}
+              </MenuItem>
+            ))}
+            
+          </Select>
+        </DialogContent>
+        <DialogActions>
+        <Button onClick={handleCloseModal}>Cancelar</Button>
+        <Button onClick={() => handleSelectDaily(selectedDaily, idDaily)}>
+          Cargar Datos
+        </Button>
+        </DialogActions>
+      </Dialog>
+  </>
+  );
 };
 
 
@@ -549,7 +625,7 @@ function useDeleteField() {
 
 const queryClient = new QueryClient();
 
-const Table = ({ data, idDaily }) => {
+const Table = ({ data, idDaily, contract_id }) => {
   if (!data) return null;
   let fields = data.fields.sort((a, b) => a.step - b.step);
 
@@ -561,7 +637,7 @@ const Table = ({ data, idDaily }) => {
   }
   return (
     <QueryClientProvider client={queryClient}>
-      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} />
+      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} />
     </QueryClientProvider>
   );
 };

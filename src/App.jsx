@@ -60,7 +60,7 @@ function App() {
                     <Route path="/users/edit/:id" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
                     <Route path="/users" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
                     <Route path="/EECCDailys/:id" element={<ProtectedRoute><EECCDailys /></ProtectedRoute>} />
-                    <Route path="/EECCDailys/edit/:id" element={<ProtectedRoute><EECCIngresarDaily /></ProtectedRoute>} />    
+                    <Route path="/EECCDailys/edit/:id/:contract_id" element={<ProtectedRoute><EECCIngresarDaily /></ProtectedRoute>} />  
                     <Route path="/EECCContracts/" element={<ProtectedRoute><EECCContracts/></ProtectedRoute>} />    
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>

@@ -5,14 +5,14 @@ import { useNavigate } from 'react-router-dom';
 const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, handleChangeRowsPerPage }) => {
     const navigate = useNavigate();
 
-    const handleEdit = (id, state_id) => {
+    const handleEdit = (id, state_id, contract_id) => {
         if (state_id === 1) { // si el estado es a la espera contratista
-        navigate(`/EECCDailys/edit/${id}`);
+            navigate(`/EECCDailys/edit/${id}/${contract_id}`);
         }else if (state_id === 2 || state_id === 3 || state_id === 4 || state_id === 5 ) {
             //enviar un mensaje de que el daily tiene que ser rechazado para que pueda sufrir cambios
          //   navigate(`/daily/edit/${id}`);
         }else if(state_id === 6){
-            //reenviar a una pagina donde se vea el daily con su data para imprimir, etc y/o un dashboard
+            //reenviar a una pagina donde se vea el daily con su data para imprimfir, etc y/o un dashboard
         }
     };
 
@@ -43,7 +43,7 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
                                 <TableCell>{formattedDate}</TableCell>
                                 <TableCell>{daily.state_name}</TableCell>
                                 <TableCell>
-                                    <Button variant="contained" onClick={() => handleEdit(daily.id, daily.state_id)} color="primary">Ir</Button>
+                                    <Button variant="contained" onClick={() => handleEdit(daily.id, daily.state_id, daily.contract_id)} color="primary">Ir</Button>
                                 </TableCell>
                             </TableRow>
                         );
