@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import { Link, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip } from '@mui/material';
 import TableEECC from '../../Components/Containers/EECC/TableIngresarDaily'
+import TableResumen from '../../Components/Containers/EECC/EECCResumenStep'
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 
@@ -68,7 +69,7 @@ const fetchStepsAndFields = async () => {
 const handleStepClick = (index) => {
   setActiveStep(index);
 };
-
+    
   const handleNext = () => {
 
     const newActiveStep =
@@ -101,10 +102,18 @@ const handleStepClick = (index) => {
   };
 
   const formContent = (step) => {
-    
-        return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
-  };
 
+      console.log(steps, step);
+      if(steps && steps.length > 0){
+        if(steps[step].idSheet === 'resumen'){
+          return <TableResumen data={steps} idDaily = {id} />;
+        }else{
+          return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
+        }
+      }
+  
+    };
+       
   return (
     <Box
    // onSubmit=""

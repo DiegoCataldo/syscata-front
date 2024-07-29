@@ -35,8 +35,8 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const [availableDailys, setAvailableDailys] = useState([]);
   const [selectedDaily, setSelectedDaily] = useState('');
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+  const [rowsPerPage, setRowsPerPage] = useState(10000);
+
 
 
   //estas variables son para guardar valores temporales principalmente para la funcion de hh trabajadas
@@ -57,7 +57,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
           // necesitamos un accessorKey único para cada columna
           accessorKey: newfieldname,
           header: field.name,
-          ...(field.name === 'Comentarios EECC' && { size: 300}),
+          ...(field.name === 'Comentarios EECC' && { size: 300 }),
           ...(field.name === 'Comentarios Codelco' && { enableEditing: false, size: 300 }),
           muiTableHeadCellProps: {
             align: 'left',
@@ -109,10 +109,10 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     try {
       const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
       setAvailableDailys(response.data.data);
-  } catch (error) {
+    } catch (error) {
       console.error('Error al obtener los Dailys:', error);
-  }
-    
+    }
+
   };
 
   const handleSelectDaily = async (selectedDaily, idDaily) => {
@@ -121,12 +121,12 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
         selectedDaily: selectedDaily,
         idDaily: idDaily,
       });
-      queryClient.invalidateQueries(['fields']); 
+      queryClient.invalidateQueries(['fields']);
       setIsModalOpen(false);
     } catch (error) {
-        console.error('Error al obtener los datos:', error);
+      console.error('Error al obtener los datos:', error);
     }
-};
+  };
 
 
 
@@ -372,7 +372,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
       showFirstButton: true,
       showLastButton: false,
     },
-    muiTableBodyCellProps:{ 
+    muiTableBodyCellProps: {
       sx: {
         align: 'center',
         textAlign: 'center',
@@ -463,7 +463,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   });
 
   useEffect(() => {
-//esto es para el totalizado de las hh trabajadas //HAY QUE HACER LO MISMO PARA LAS HH OPERATIVAS, NO OPERATIVAS, ETC
+    //esto es para el totalizado de las hh trabajadas //HAY QUE HACER LO MISMO PARA LAS HH OPERATIVAS, NO OPERATIVAS, ETC
     const prePaginationRowModel = table.getPrePaginationRowModel();
     if (!prePaginationRowModel.rows) return;
     const dataFiltrada = prePaginationRowModel.rows.map(row => row.original);
@@ -478,10 +478,11 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   }, [table.getState().columnFilters, fetchedData.rows]);
 
 
-  return(
-    <> 
-  <MaterialReactTable table={table} />
-  <Dialog open={isModalOpen} onClose={handleCloseModal}>
+  return (
+    <>
+      <MaterialReactTable table={table} />
+      
+      <Dialog open={isModalOpen} onClose={handleCloseModal}>
         <DialogTitle>Seleccione una Daily</DialogTitle>
         <DialogContent>
           <Select
@@ -494,17 +495,17 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
                 {daily.date}
               </MenuItem>
             ))}
-            
+
           </Select>
         </DialogContent>
         <DialogActions>
-        <Button onClick={handleCloseModal}>Cancelar</Button>
-        <Button onClick={() => handleSelectDaily(selectedDaily, idDaily)}>
-          Cargar Datos
-        </Button>
+          <Button onClick={handleCloseModal}>Cancelar</Button>
+          <Button onClick={() => handleSelectDaily(selectedDaily, idDaily)}>
+            Cargar Datos
+          </Button>
         </DialogActions>
       </Dialog>
-  </>
+    </>
   );
 };
 
