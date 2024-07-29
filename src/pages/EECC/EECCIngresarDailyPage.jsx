@@ -53,6 +53,7 @@ const fetchStepsAndFields = async () => {
           fields: step.fields.sort((a, b) => a.step - b.step)
         };
       });
+      
 //le agrego un paso de resumen al ultimo
       const FinalizarStep = {
         idSheet: 'resumen',
@@ -102,18 +103,10 @@ const handleStepClick = (index) => {
   };
 
   const formContent = (step) => {
+    
+        return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
+  };
 
-      console.log(steps, step);
-      if(steps && steps.length > 0){
-        if(steps[step].idSheet === 'resumen'){
-          return <TableResumen data={steps} idDaily = {id} />;
-        }else{
-          return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
-        }
-      }
-  
-    };
-       
   return (
     <Box
    // onSubmit=""
