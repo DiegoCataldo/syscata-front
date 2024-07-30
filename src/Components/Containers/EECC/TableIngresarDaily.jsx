@@ -43,6 +43,15 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const [rowValuesTemp, setRowValuesTemp] = useState({});
 
   const [HHtrabajadasTable, setHHtrabajadasTable] = useState([]);
+  const [HMoperativasTable, setHMoperativasTable] = useState([]);
+  const [HMnoOperativasTable, setHMnoOperativasTable] = useState([]);
+  const [HMmantencion, setHMmantencion] = useState([]);
+  const [HMenPanne, setHMenPanne] = useState([]);
+  const [PersInv, setPersInv] = useState([]);
+  const [HHTotalesInt, setHHtotalesInt] = useState([]);
+  const [HMTotalesInt, setHMtotalesInt] = useState([]);
+
+
   const [sorting, setSorting] = useState([]);
 
   const columns = useMemo(() => {
@@ -69,6 +78,15 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
             align: 'center',
           },
           ...(field.name === 'HH Trabajadas' && { Footer: () => <div>Total: {HHtrabajadasTable} </div> }),
+          ...(field.name === 'Horas Operativas' && { Footer: () => <div>Total: {HMoperativasTable} </div> }),
+          ...(field.name === 'Horas No Operativas' && { Footer: () => <div>Total: {HMnoOperativasTable} </div> }),
+          ...(field.name === 'Horas Mantención Programada' && { Footer: () => <div>Total: {HMmantencion} </div> }),
+          ...(field.name === 'Horas Equipo en Panne' && { Footer: () => <div>Total: {HMenPanne} </div> }),
+          ...(field.name === 'HH Totales' && { Footer: () => <div>Total: {HHTotalesInt} </div> }),
+          ...(field.name === 'Cantidad Personal Involucrado' && { Footer: () => <div>Total: {PersInv} </div> }),
+          ...(field.name === 'HM Totales' && { Footer: () => <div>Total: {HMTotalesInt} </div> }),
+
+
           muiEditTextFieldProps: ({ cell, row, table }) => ({
             ...(field.name === 'HH Trabajadas' && {
               value: rowValuesTemp[newfieldname] || '',
@@ -94,7 +112,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
 
         };
       });
-  }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable]);
+  }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable, HMoperativasTable, HMnoOperativasTable, HMmantencion, HMenPanne, HHTotalesInt, PersInv, HMTotalesInt]);
 
   const handleOpenModal = async () => {
     await fetchDailys();
@@ -368,7 +386,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     enableRowNumbers: true,
     muiTableContainerProps: { sx: { minHeight: '500px', maxHeight: '800px' } },
     muiPaginationProps: {
-      rowsPerPageOptions: [20, 50, 100, 1000, 2000],
+      rowsPerPageOptions: [10, 50, 100, 1000, 2000],
       showFirstButton: true,
       showLastButton: false,
     },
@@ -463,7 +481,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   });
 
   useEffect(() => {
-    //esto es para el totalizado de las hh trabajadas //HAY QUE HACER LO MISMO PARA LAS HH OPERATIVAS, NO OPERATIVAS, ETC
+    //esto es para el totalizado por columna  hh trabajadas HH OPERATIVAS, NO OPERATIVAS, ETC
     const prePaginationRowModel = table.getPrePaginationRowModel();
     if (!prePaginationRowModel.rows) return;
     const dataFiltrada = prePaginationRowModel.rows.map(row => row.original);
@@ -473,7 +491,55 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
       return sum + hhTrabajadas;
     }, 0);
     setHHtrabajadasTable(sumHHTrabajadas);
-    console.log('Suma de HH Trabajadas:', sumHHTrabajadas);
+
+    const sumHMOperativas = dataFiltrada.reduce((sum, row) => {
+      const hmOperativas = parseFloat(row[`Horas Operativas-${idSheet}`]) || 0;
+      return sum + hmOperativas;
+    }, 0);
+    setHMoperativasTable(sumHMOperativas);
+
+    const sumHMNoOperativas = dataFiltrada.reduce((sum, row) => {
+      const hmNoOperativas = parseFloat(row[`Horas No Operativas-${idSheet}`]) || 0;
+      return sum + hmNoOperativas;
+    }
+      , 0);
+    setHMnoOperativasTable(sumHMNoOperativas);
+
+    const sumHMMantencion = dataFiltrada.reduce((sum, row) => {
+      const hmMantencion = parseFloat(row[`Horas Mantención Programada-${idSheet}`]) || 0;
+      return sum + hmMantencion;
+    }
+      , 0);
+    setHMmantencion(sumHMMantencion);
+
+    const sumHMenPanne = dataFiltrada.reduce((sum, row) => {
+      const hmEnPanne = parseFloat(row[`Horas Equipo en Panne-${idSheet}`]) || 0;
+      return sum + hmEnPanne;
+    }
+      , 0);
+    setHMenPanne(sumHMenPanne);
+
+    const sumPersInv = dataFiltrada.reduce((sum, row) => {
+      const persInv = parseFloat(row[`Cantidad Personal Involucrado-${idSheet}`]) || 0;
+      return sum + persInv;
+    }
+      , 0);
+    setPersInv(sumPersInv);
+
+    const sumHHTotalesInt = dataFiltrada.reduce((sum, row) => {
+      const hhTotalesInt = parseFloat(row[`HH Totales-${idSheet}`]) || 0;
+      return sum + hhTotalesInt;
+    }
+      , 0);
+    setHHtotalesInt(sumHHTotalesInt);
+
+    const sumHMTotalesInt = dataFiltrada.reduce((sum, row) => {
+      const hmTotalesInt = parseFloat(row[`HM Totales-${idSheet}`]) || 0;
+      return sum + hmTotalesInt;
+    }
+      , 0);
+    setHMtotalesInt(sumHMTotalesInt);
+
 
   }, [table.getState().columnFilters, fetchedData.rows]);
 

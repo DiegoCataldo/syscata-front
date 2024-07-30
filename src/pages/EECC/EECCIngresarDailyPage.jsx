@@ -103,8 +103,15 @@ const handleStepClick = (index) => {
   };
 
   const formContent = (step) => {
+    if(steps.length === 0){
+      return <h2>Cargando...</h2>}
+
+    if(steps[step].idSheet === 'resumen'){
+      return <TableResumen data={steps } idDaily = {id} contract_id = {contract_id} />;
+    }else{
+      return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
+    }
     
-        return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
   };
 
   return (
