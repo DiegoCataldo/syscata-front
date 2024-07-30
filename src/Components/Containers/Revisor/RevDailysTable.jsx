@@ -6,13 +6,7 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
     const navigate = useNavigate();
 
     const handleEdit = (id, state_id, contract_id) => {
-        if (state_id === 1) { // si el estado es a la espera contratista
-            navigate(`/EECCDailys/edit/${id}/${contract_id}`);
-        }else if (state_id === 2 || state_id === 3) { // si el estado es a la espera aprocion CODELCO o en revisión
-            navigate(`/EECCdailyEnviado/${id}/${contract_id}/${state_id}`);
-        }else if(state_id === 4){
-            //reenviar a una pagina donde se vea el daily con su data para imprimfir, etc y/o un dashboard
-        }
+            navigate(`/RevRevisarDaily/${id}/${contract_id}`);
     };
 
 

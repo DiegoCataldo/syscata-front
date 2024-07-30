@@ -270,7 +270,7 @@ export default function Header() {
                                         <ListItemText primary="Ingresar Dailys" />
                                     </ListItemButton>
                                 </ListItem>
-                                <ListItem component={Link} to="/users" button key="Revisar Dailys" sx={{ color: 'white' }}>
+                                <ListItem component={Link} to="/RevContracts" button key="Revisar Dailys" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <ContentPasteSearchIcon />

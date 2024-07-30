@@ -5,8 +5,8 @@ import StepButton from '@mui/material/StepButton';
 import Typography from '@mui/material/Typography';
 import { Link, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip } from '@mui/material';
-import TableEECC from '../../Components/Containers/EECC/TableIngresarDaily'
-import TableResumen from '../../Components/Containers/EECC/EECCResumenStep'
+import TableEECC from '../../Components/Containers/EECC/TableVerDaily'
+import TableResumen from '../../Components/Containers/EECC/EECCverDailyResumen'
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 
@@ -20,7 +20,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [steps, setSteps] = useState([]);
 
 
-  const { id, contract_id } = useParams()
+  const { daily_id, contract_id } = useParams()
 
   const totalSteps = () => {
     return steps.length;
@@ -42,11 +42,11 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
    // console.log('entro al useEffect');
     fetchStepsAndFields(); 
     
-}, [id]);
+}, [daily_id]);
 
 const fetchStepsAndFields = async () => {
   try { 
-      const response = await axios.get(`${BASE_URL}/Dailys/${id}/dailyStructure`)
+      const response = await axios.get(`${BASE_URL}/Dailys/${daily_id}/dailyStructure`)
       const stepsOrdenados = response.data.steps.map((step) => {
         return {
           ...step,
@@ -67,9 +67,7 @@ const fetchStepsAndFields = async () => {
   }
 };
 
-const handleStepClick = (index) => {
-  setActiveStep(index);
-};
+
     
   const handleNext = () => {
 
@@ -90,26 +88,15 @@ const handleStepClick = (index) => {
     setActiveStep(step);
   };
 
-  const handleComplete = () => {
-    const newCompleted = completed;
-    newCompleted[activeStep] = true;
-    setCompleted(newCompleted);
-    handleNext();
-  };
-
-  const handleReset = () => {
-    setActiveStep(0);
-    setCompleted({});
-  };
-
   const formContent = (step) => {
     if(steps.length === 0){
-      return <h2>Cargando...</h2>}
+      return <h2>Cargando...</h2>
+    }
 
     if(steps[step].idSheet === 'resumen'){
-      return <TableResumen data={steps } idDaily = {id} contract_id = {contract_id} />;
+      return <TableResumen data={steps } idDaily = {daily_id} contract_id = {contract_id} />;
     }else{
-      return <TableEECC  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
+      return <TableEECC  data={steps[step]} idDaily = {daily_id} contract_id = {contract_id} />;
     }
     
   };
@@ -118,7 +105,8 @@ const handleStepClick = (index) => {
     <Box
    // onSubmit=""
     sx={{ width: '90%', margin: '0 auto' }}
-  >   <h2 style={{ textAlign: 'center' }}>Ingresar Daily</h2>
+  >
+   <h2 style={{ textAlign: 'center' }}>Visualizar Daily</h2>
 
       <Box
         component="form"

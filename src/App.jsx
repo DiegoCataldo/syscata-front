@@ -17,6 +17,16 @@ import ContractFormato from "./pages/Configurar/ContractEstructuraPage"
 import EECCDailys from "./pages/EECC/EECCDailysPage"
 import EECCIngresarDaily from "./pages/EECC/EECCIngresarDailyPage"
 import EECCContracts from "./pages/EECC/EECCContractsPage"
+import EECCdailyEnviado from "./pages/EECC/EECCDailyEnviado"
+import EECCverDaily from "./pages/EECC/EECCVerDailyPage"
+import RevContracts from "./pages/Revisor/RevContractsPage"
+import RevRolesSelect from "./pages/Revisor/RevRolesSelectPage"
+import RevDailys  from "./pages/Revisor/RevDailysPage"
+import RevRevisarDaily  from "./pages/Revisor/RevRevisarDailyPage"
+
+
+
+
 
 
 
@@ -62,6 +72,16 @@ function App() {
                     <Route path="/EECCDailys/:id" element={<ProtectedRoute><EECCDailys /></ProtectedRoute>} />
                     <Route path="/EECCDailys/edit/:id/:contract_id" element={<ProtectedRoute><EECCIngresarDaily /></ProtectedRoute>} />  
                     <Route path="/EECCContracts/" element={<ProtectedRoute><EECCContracts/></ProtectedRoute>} />    
+                    <Route path="/EECCdailyEnviado/:daily_id/:contract_id/:state_id" element={<ProtectedRoute><EECCdailyEnviado/></ProtectedRoute>} />    
+                    <Route path="/EECCverDaily/:daily_id/:contract_id" element={<ProtectedRoute><EECCverDaily/></ProtectedRoute>} />
+                    <Route path="/RevContracts/" element={<ProtectedRoute><RevContracts/></ProtectedRoute>} />
+                    <Route path="/RevRolesSelect/:contract_id" element={<ProtectedRoute><RevRolesSelect/></ProtectedRoute>} />
+                    <Route path="/RevDailys/:id_rol/:contract_id" element={<ProtectedRoute><RevDailys/></ProtectedRoute>} />
+                    <Route path="/RevRevisarDaily/:id/:contract_id" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
+
+
+
+
                     <Route path="*" element={<Navigate to="/login" />} />
                 </Routes>
             </BrowserRouter>

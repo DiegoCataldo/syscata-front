@@ -1,27 +1,34 @@
 import React, { useEffect, useState }  from 'react';
-import ContractTable from '../../Components/Containers/EECC/EECCContractsTable';
+import DailysTable from '../../Components/Containers/Revisor/RevDailysTable';
 import { Box, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { toast } from 'react-toastify';
 
 const ContractsPage = () => {
-    const [contracts, setContracts] = useState([]);
+    const [dailys, setDailys] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
+    const { id_rol, contract_id } = useParams(); 
+
 
     useEffect(() => {
-        fetchContracts(page + 1, rowsPerPage);
+        fetchDailys(page + 1, rowsPerPage);
     }, [page, rowsPerPage]);
-    const fetchContracts = async (page, rowsPerPage) => {
+    
+
+    const fetchDailys = async (page, rowsPerPage) => {
         try {
-            const response = await axios.get(`${BASE_URL}/contracts?page=${page}&per_page=${rowsPerPage}`);
-            setContracts(response.data.data);
+            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
+            const dailys = response.data.data;
+            const filteredDailys = dailys.filter(daily => daily.state_id === 2 || daily.state_id === 3);
+            setDailys(filteredDailys);
+
             setTotalCount(response.data.total);
         } catch (error) {
-            console.error('Error al obtener los contratos:', error);
+            console.error('Error al obtener los Dailys:', error);
         }
     };
 
@@ -37,22 +44,19 @@ const ContractsPage = () => {
 
     return (
         <Box
-        // onSubmit=""
-         sx={{ width: '95%', margin: '0 auto', mt: 4}}
-       >
+         sx={{ width: '95%', margin: '0 auto', mt: 4}}>
         <div>
-            <h2>Seleccionar Contratos</h2>
+            <h2>Revisar Daily Report</h2>
             <Box display="flex" justifyContent="flex-end" mb={2}>
-               
+
             </Box>
-            <ContractTable 
-                contracts={contracts}
+            <DailysTable 
+                dailys={dailys}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 totalCount={totalCount}
                 handleChangePage={handleChangePage}
-                handleChangeRowsPerPage={handleChangeRowsPerPage}
-            />
+                handleChangeRowsPerPage={handleChangeRowsPerPage}            />
         </div>
         </Box>
     );

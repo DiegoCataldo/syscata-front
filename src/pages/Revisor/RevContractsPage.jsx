@@ -1,5 +1,5 @@
 import React, { useEffect, useState }  from 'react';
-import ContractTable from '../../Components/Containers/EECC/EECCContractsTable';
+import ContractTable from '../../Components/Containers/Revisor/RevContractsTable';
 import { Box, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import axios from 'axios';

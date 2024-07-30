@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip, Modal } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-
-
-
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -386,50 +383,23 @@ const TablasResumen = ({ data, idDaily, contract_id }) => {
     }
 
 
-    const sendData = async () => {
-        const response = await axios.post(`${BASE_URL}/enviarDaily/${idDaily}`);
-        console.log('response', response);
-        if (response.status === 200) {
-            window.location.href = `/EECCdailyEnviado/${idDaily}`;
-        }
-    }
-
-
-
-
     return (
         <Box
-        sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}
-    >
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-            <Tooltip title="Enviar Daily Report">
-                <Button
-                    id="guardarCambiosButton"
-                    startIcon={<SaveIcon />}
-                    style={{ backgroundColor: '#388e3c' }}
-                    variant="contained"
-                    onClick={() => {
-                        if (window.confirm('¿Estás seguro de guardar los cambios?')) {
-                            sendData();
-                            alert('Cambios guardados exitosamente');
-                        }
-                    }}
-                >
-                    Enviar Daily Report
-                </Button>
-            </Tooltip>
+            sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}
+        >
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+            </Box>
+            <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <h3>Resumen Personal</h3>
+                    <TablePersonal data={dataResumenPersonal} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                    <h3>Resumen Maquinarias</h3>
+                    <TableMaquinas data={dataResumenMaquinas} />
+                </div>
+            </Box>
         </Box>
-        <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <h3>Resumen Personal</h3>
-                <TablePersonal data={dataResumenPersonal} />
-            </div>
-            <div style={{ textAlign: 'center' }}>
-                <h3>Resumen Maquinarias</h3>
-                <TableMaquinas data={dataResumenMaquinas} />
-            </div>
-        </Box>
-    </Box>
     );
 
 
