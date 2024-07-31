@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip, Modal } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import { useNavigate } from 'react-router-dom';
+
+
+
 import {
     MaterialReactTable,
     useMaterialReactTable,
@@ -106,7 +108,7 @@ const TableMaquinas = ({ data }) => {
 }
 
 const TablasResumen = ({ data, idDaily, contract_id }) => {
-    const navigate = useNavigate();
+
 
     const [steps, setSteps] = useState([]);
     const [rows, setRows] = useState([]);
@@ -384,14 +386,6 @@ const TablasResumen = ({ data, idDaily, contract_id }) => {
     }
 
 
-    const sendData = async () => {
-        const response = await axios.post(`${BASE_URL}/enviarDaily/${idDaily}`);
-        console.log('response', response);
-        const state_id = 2; //este es el estado de revision pendiente
-        if (response.status === 200) {
-            navigate(`/EECCdailyEnviado/${idDaily}/${contract_id}/${state_id}`);
-        }
-    }
 
 
 
@@ -400,24 +394,7 @@ const TablasResumen = ({ data, idDaily, contract_id }) => {
         <Box
         sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}
     >
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-            <Tooltip title="Enviar Daily Report">
-                <Button
-                    id="guardarCambiosButton"
-                    startIcon={<SaveIcon />}
-                    style={{ backgroundColor: '#388e3c' }}
-                    variant="contained"
-                    onClick={() => {
-                        if (window.confirm('¿Estás seguro de guardar los cambios?')) {
-                            sendData();
-                            alert('Cambios guardados exitosamente');
-                        }
-                    }}
-                >
-                    Enviar Daily Report
-                </Button>
-            </Tooltip>
-        </Box>
+
         <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
                 <h3>Resumen Personal</h3>

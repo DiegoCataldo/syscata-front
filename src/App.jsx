@@ -21,8 +21,15 @@ import EECCdailyEnviado from "./pages/EECC/EECCDailyEnviado"
 import EECCverDaily from "./pages/EECC/EECCVerDailyPage"
 import RevContracts from "./pages/Revisor/RevContractsPage"
 import RevRolesSelect from "./pages/Revisor/RevRolesSelectPage"
-import RevDailys  from "./pages/Revisor/RevDailysPage"
+import RevListaDailys  from "./pages/Revisor/RevListaDailysPage"
 import RevRevisarDaily  from "./pages/Revisor/RevRevisarDailyPage"
+import RevDailyRevisado  from "./pages/Revisor/RevDailyRevisadoPage"
+import AproContracts from "./pages/Aprobador/AproContractsPage"
+import AproListaDailys from "./pages/Aprobador/AproListaDailysPage"
+import AproAprobarDaily  from "./pages/Aprobador/AproAprobarDailyPage"
+
+
+
 
 
 
@@ -76,8 +83,13 @@ function App() {
                     <Route path="/EECCverDaily/:daily_id/:contract_id" element={<ProtectedRoute><EECCverDaily/></ProtectedRoute>} />
                     <Route path="/RevContracts/" element={<ProtectedRoute><RevContracts/></ProtectedRoute>} />
                     <Route path="/RevRolesSelect/:contract_id" element={<ProtectedRoute><RevRolesSelect/></ProtectedRoute>} />
-                    <Route path="/RevDailys/:id_rol/:contract_id" element={<ProtectedRoute><RevDailys/></ProtectedRoute>} />
-                    <Route path="/RevRevisarDaily/:id/:contract_id" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
+                    <Route path="/RevListaDailys/:id_rol/:contract_id" element={<ProtectedRoute><RevListaDailys/></ProtectedRoute>} />
+                    <Route path="/RevRevisarDaily/:id/:contract_id/:role_id" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
+                    <Route path="/RevDailyRevisado/:daily_id/:contract_id/:state_id/:nombre_area" element={<ProtectedRoute><RevDailyRevisado/></ProtectedRoute>} />    
+                    <Route path="/AproContracts/" element={<ProtectedRoute><AproContracts/></ProtectedRoute>} />
+                    <Route path="/AproListaDailys/:contract_id" element={<ProtectedRoute><AproListaDailys/></ProtectedRoute>} />
+                    <Route path="/AproAprobarDaily/:id/:contract_id" element={<ProtectedRoute><AproAprobarDaily/></ProtectedRoute>} />
+
 
 
 

@@ -278,7 +278,7 @@ export default function Header() {
                                         <ListItemText primary="Revisar Dailys" />
                                     </ListItemButton>
                                 </ListItem>
-                                <ListItem component={Link} to="/dailys" button key="Aprobar Dailys" sx={{ color: 'white' }}>
+                                <ListItem component={Link} to="/AproContracts" button key="Aprobar Dailys" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <AssignmentTurnedInIcon />

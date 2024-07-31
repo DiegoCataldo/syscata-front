@@ -67,7 +67,8 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
           accessorKey: newfieldname,
           header: field.name,
           ...(field.name === 'Comentarios EECC' && { size: 300 }),
-          ...(field.name === 'Comentarios Codelco' && { enableEditing: false, size: 300 }),
+          ...(field.name !== 'Comentarios Codelco' && { enableEditing: false  }),
+          ...(field.name == 'Comentarios Codelco' && {  size: 300 }),
           muiTableHeadCellProps: {
             align: 'left',
           },
@@ -423,28 +424,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
       await handleSaveField({ values, row, table });
       resetRowValues();
     },
-    renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">NUEVO REGISTRO</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {internalEditComponents}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
-    renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
-      <>
-        <DialogTitle variant="h3">Editar campo</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {internalEditComponents}
-        </DialogContent>
-        <DialogActions>
-          <MRT_EditActionButtons variant="text" table={table} row={row} />
-        </DialogActions>
-      </>
-    ),
+
     renderRowActions: ({ row, table }) => (
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '150px' }}>
         <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
@@ -453,22 +433,13 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
               <EditIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Eliminar">
-            <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+          
         </Box>
       </div>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
-          NUEVO REGISTRO
-        </Button>
-        <Button variant="contained" color="secondary" onClick={handleOpenModal}>
-          Precargar Data de un DR  anterior
-        </Button>
+       
       </Box>
 
     ),

@@ -6,7 +6,7 @@ const ContractTable = ({ contracts, page, rowsPerPage, totalCount, handleChangeP
     const navigate = useNavigate();
 
     const handleEdit = (id) => {
-        navigate(`/EECCDailys/${id}`);
+        navigate(`/AproListaDailys/${id}`);
     };
 
     const handleDelete = async (id) => {

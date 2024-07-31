@@ -21,7 +21,7 @@ const ContractTable = ({ contracts, page, rowsPerPage, totalCount, handleChangeP
                         <TableCell>DEN</TableCell>
                         <TableCell>Proyecto</TableCell>
                         <TableCell>Empresa contratista</TableCell>
-                        <TableCell>Encargados Codelco(Daily)</TableCell>
+                        <TableCell>Aprobador Codelco(Daily)</TableCell>
                         <TableCell>Encargado Contratista(Daily)</TableCell>
                         <TableCell>Administrador de terreno</TableCell>
                         <TableCell>Acciones</TableCell>
@@ -35,12 +35,11 @@ const ContractTable = ({ contracts, page, rowsPerPage, totalCount, handleChangeP
                             <TableCell>{contract.DEN}</TableCell>
                             <TableCell>{contract.proyecto}</TableCell>
                             <TableCell>{contract.empresa_contratista}</TableCell>
-                            <TableCell>{contract.rut_contratista}</TableCell>
                              <TableCell>
-                                {contract.encargadoCodelco.map((encargado, index) => (
+                                {contract.aprobadorCodelco.map((encargado, index) => (
                                     <span key={index}>
                                         {encargado.name}
-                                        {index !== contract.encargadoCodelco.length - 1 && ', '}
+                                        {index !== contract.aprobadorCodelco.length - 1 && ', '}
                                     </span>
                                 ))}
                             </TableCell>

@@ -2,11 +2,11 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, handleChangeRowsPerPage }) => {
+const DailysTable = ({ dailys, role_id, page, rowsPerPage, totalCount, handleChangePage, handleChangeRowsPerPage }) => {
     const navigate = useNavigate();
 
-    const handleEdit = (id, state_id, contract_id) => {
-            navigate(`/RevRevisarDaily/${id}/${contract_id}`);
+    const handleEdit = (id,  contract_id) => {
+            navigate(`/RevRevisarDaily/${id}/${contract_id}/${role_id}`);
     };
 
 
@@ -17,6 +17,12 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
                     <TableRow>
                         <TableCell>Fecha</TableCell>
                         <TableCell>Estado</TableCell>
+                        <TableCell>Revisado por P&C</TableCell>
+                        <TableCell>Revisado por Construcción</TableCell>
+                        <TableCell>Revisado por Relaciones Laborales</TableCell>
+                        <TableCell>Revisado por Otra área</TableCell>
+
+
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -35,6 +41,10 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
                             <TableRow key={daily.id}>
                                 <TableCell>{formattedDate}</TableCell>
                                 <TableCell>{daily.state_name}</TableCell>
+                                <TableCell>{daily.revisado_pyc}</TableCell>
+                                <TableCell>{daily.revisado_cc}</TableCell>
+                                <TableCell>{daily.revisado_rrll}</TableCell>
+                                <TableCell>{daily.revisado_otro}</TableCell>
                                 <TableCell>
                                     <Button variant="contained" onClick={() => handleEdit(daily.id, daily.state_id, daily.contract_id)} color="primary">Ir</Button>
                                 </TableCell>

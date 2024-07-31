@@ -5,9 +5,9 @@ import StepButton from '@mui/material/StepButton';
 import Typography from '@mui/material/Typography';
 import { Link, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip } from '@mui/material';
-import TableSteps from '../../Components/Containers/Revisor/RevRevisarDailyTable';
-import TableResumen from '../../Components/Containers/Revisor/RevRevisarResumenStep'
-import TableComentarios from '../../Components/Containers/Revisor/RevRevisarCommentsTable'
+import TableSteps from '../../Components/Containers/Aprobador/AproAprobarDailyTable';
+import TableResumen from '../../Components/Containers/Aprobador/AproAprobarResumenStep'
+import TableComentarios from '../../Components/Containers/Aprobador/AproAprobarCommentsTable'
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { AuthContext } from '../../Components/context/authContext'
@@ -21,12 +21,11 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
-  const[rol_info, setRol_info] = useState(0);
   const { accessToken, currentUser } = useContext(AuthContext);
 
 
 
-  const { id, contract_id, role_id } = useParams()
+  const { id, contract_id } = useParams()
 
   const totalSteps = () => {
     return steps.length;
@@ -77,10 +76,6 @@ const fetchStepsAndFields = async () => {
 
       setSteps(updatedStepsOrdenados);
 
-      const responseRol = await axios.get(`${BASE_URL}/getRolinfo/${role_id}`)
-     // console.log('responseRol', responseRol.data);
-      setRol_info(responseRol.data);
-
   } catch (error) {
       console.error('Error al obtener pasos y campos:', error);
   }
@@ -117,7 +112,7 @@ const fetchStepsAndFields = async () => {
     if(steps[step].idSheet === 'resumen'){
       return <TableResumen data={steps } idDaily = {id} contract_id = {contract_id} />;
     }if(steps[step].idSheet === 'comentarios'){
-      return <TableComentarios data={steps } idDaily = {id} contract_id = {contract_id} currentUser = {currentUser} rol_info ={rol_info} />;
+      return <TableComentarios data={steps } idDaily = {id} contract_id = {contract_id} currentUser = {currentUser}  />;
     }else{
       return <TableSteps  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
     }

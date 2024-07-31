@@ -12,7 +12,7 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
       revisorCC: [],
       revisorOtraArea: [],
       encargadoContratista: [],
-      encargadoCodelco: [],
+      aprobadorCodelco: [],
       adminDeTerreno: [],
       visualizador: [],
       revisorPYCRequired: false,
@@ -49,8 +49,8 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
   const handleVisualizadorChange = (selected) => {
     setValue('visualizador', selected); 
   };
-  const handleEncargadoCodelcoChange = (selected) => {
-    setValue('encargadoCodelco', selected); 
+  const handleAprobadorCodelcoChange = (selected) => {
+    setValue('aprobadorCodelco', selected); 
   };
   const customSubmit = (data) => {
     onSubmit({ ...data, created_by: currentUser.id  });
@@ -75,7 +75,7 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
       setValue('revisorPYCRequired', contract.revisorPYCRequired); 
       setValue('revisorCCRequired', contract.revisorCCRequired); 
       setValue('revisorOtraAreaRequired', contract.revisorOtraAreaRequired); 
-      setValue('encargadoCodelco', contract.encargadoCodelco.map(user => user.id));
+      setValue('aprobadorCodelco', contract.aprobadorCodelco.map(user => user.id));
 
     }
   }, [contract, setValue]);
@@ -199,18 +199,18 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
         </Grid>
         <Grid item xs={12} sm={6}>
         <FormControl fullWidth>
-            <InputLabel id="adminDeContrato-field-label">Encargados Codelco (Daily)</InputLabel>
+            <InputLabel id="adminDeContrato-field-label">Aprobador Codelco (Daily)</InputLabel>
             <Controller
-              name="encargadoCodelco"
+              name="aprobadorCodelco"
               control={control}
               rules={{ required: 'El campo no puede estar vacío' }}
               render={({ field }) => (
                 <Select
-                  labelId="encargadoCodelco-field-label"
-                  id="encargadoCodelco"
+                  labelId="aprobadorCodelco-field-label"
+                  id="aprobadorCodelco"
                   {...field}
                   multiple
-                  input={<OutlinedInput label="encargadoCodelco" />}
+                  input={<OutlinedInput label="aprobadorCodelco" />}
                   renderValue={(selected) => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {selected.map((value) => (
@@ -218,7 +218,7 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
                       ))}
                     </Box>
                   )}
-                  onChange={(e) => handleEncargadoCodelcoChange(e.target.value)}
+                  onChange={(e) => handleAprobadorCodelcoChange(e.target.value)}
                 >
                   {users.map((user) => (
                     <MenuItem key={user.id} value={user.id}>
@@ -228,7 +228,7 @@ const ContractForm = ({ onSubmit, users, companies, contract }) => {
                 </Select>
               )}
             />
-            {errors.encargadoCodelco && <p style={{ color: 'red' }}>{errors.encargadoCodelco.message}</p>}
+            {errors.aprobadorCodelco && <p style={{ color: 'red' }}>{errors.aprobadorCodelco.message}</p>}
           </FormControl>
         </Grid>
         <Grid item xs={12} sm={6}>

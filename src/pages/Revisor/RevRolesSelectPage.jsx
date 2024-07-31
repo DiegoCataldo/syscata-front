@@ -26,7 +26,7 @@ const RevRolesSelect = () => {
 
 
     const handleEdit = (id) => {
-        navigate(`/RevDailys/${id}/${contract_id}`);
+        navigate(`/RevListaDailys/${id}/${contract_id}`);
     };
 
     const handleChangePage = (event, newPage) => {

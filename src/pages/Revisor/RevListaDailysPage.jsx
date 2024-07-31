@@ -1,5 +1,5 @@
 import React, { useEffect, useState }  from 'react';
-import DailysTable from '../../Components/Containers/Revisor/RevDailysTable';
+import DailysTable from '../../Components/Containers/Revisor/RevListaDailysTable';
 import { Box, Button } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -52,6 +52,7 @@ const ContractsPage = () => {
             </Box>
             <DailysTable 
                 dailys={dailys}
+                role_id = {id_rol}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 totalCount={totalCount}
