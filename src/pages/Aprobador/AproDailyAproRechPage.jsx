@@ -7,29 +7,29 @@ import { BASE_URL } from '../../helpers/config';
 import { toast } from 'react-toastify';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 
 
 
 const DailyEnviado = () => {
 
-    const { daily_id, contract_id, state_id, nombre_area } = useParams()
+    const { daily_id, contract_id, respuesta } = useParams()
 
-    console.log(state_id);
     console.log(daily_id);
     console.log(contract_id);
-    console.log(nombre_area);
     return (
         <Box sx={{ width: '95%', margin: '0 auto', mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
-{(state_id == 2 || state_id == 3) && (
+{(respuesta == 'Aprobado' ) && (
                 <Box display="flex" flexDirection="column" alignItems="center">
 
-                    <h2 style={{ textAlign: 'center' }}>Daily Report declarado "Revisado por {nombre_area}" </h2>
+                    <h2 style={{ textAlign: 'center' }}>Daily Report "Aprobado" </h2>
 
                     <Box display="flex" flexDirection="column" alignItems="center">
                         <CheckCircleIcon style={{ color: 'green', fontSize: '50px', marginBottom: '10px' }} />
-                        <p>El Daily Report se encuentra en revisión por parte de CODELCO, </p>
-                        <p>Esto quiere decir que puede faltar la revisión de otra área o la aprobación de Codelco.</p>
+                        <p>El Daily Report se encuentra aprobado </p>
+                        <p>Si quiere ver la información del Daily Report presione en "Visualizar Daily Report".</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
                         <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
@@ -42,14 +42,15 @@ const DailyEnviado = () => {
                 </Box>
             )}
 
-            {state_id == 4 && (
+            {respuesta == 'Rechazado' && (
                 <Box display="flex" flexDirection="column" alignItems="center">
 
-                    <h2 style={{ textAlign: 'center' }}>Daily Report Aprobado</h2>
+                    <h2 style={{ textAlign: 'center' }}>Daily Report Rechazado</h2>
 
                     <Box display="flex" flexDirection="column" alignItems="center">
-                        <CheckCircleIcon style={{ color: 'green', fontSize: '50px', marginBottom: '10px' }} />
-                        <p>El Daily Report se encuentra aprobado.</p>
+                        <CancelIcon style={{ color: 'red', fontSize: '50px', marginBottom: '10px' }} />
+                        <p>El Daily se encuentra Rechazado.</p>
+                        <p>Se le comunicará a la empresa colaboradora del rechazo del Daily Report y se solicitará el reenvio del mismo</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
                         <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>

@@ -36,6 +36,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import FindInPageIcon from '@mui/icons-material/FindInPage';
 import Collapse from '@mui/material/Collapse';
 import AGlogo from '../../assets/img/AG.png'
 import DTSlogo from '../../assets/img/DTS.png'
@@ -284,6 +285,14 @@ export default function Header() {
                                             <AssignmentTurnedInIcon />
                                         </ListItemIcon>
                                         <ListItemText primary="Aprobar Dailys" />
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem component={Link} to="/VisContracts" button key="Visualizar Dailys" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <FindInPageIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Visualizar Dailys" />
                                     </ListItemButton>
                                 </ListItem>
                             </List>

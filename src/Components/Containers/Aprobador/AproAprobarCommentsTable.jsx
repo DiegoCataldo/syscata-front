@@ -30,6 +30,9 @@ import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+
 
 
 const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
@@ -52,16 +55,18 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
   const columns = useMemo(
     () => [
       {
-        accessorKey: 'id',
-        header: 'Id',
+        accessorKey: 'revision',
+        header: 'Revision',
         enableEditing: false,
-        size: 80,
+        muiEditTextFieldProps: {
+          required: false,
+
+          //optionally add validation checking for onBlur or onChange
+        },
       },
-
-
       {
         accessorKey: 'user_name',
-        header: 'Usuario',
+        header: 'Nombre Revisor',
         enableEditing: false,
         muiEditTextFieldProps: {
           required: false,
@@ -72,7 +77,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
 
       {
         accessorKey: 'role_name',
-        header: 'Rol del Usuario',
+        header: 'Rol Revisor',
         enableEditing: false,
         muiEditTextFieldProps: {
           required: false,
@@ -80,8 +85,19 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
       },
 
       {
-        accessorKey: 'comentario',
-        header: 'Comentario',
+        accessorKey: 'comentario_codelco',
+        header: 'Comentario Codelco',
+      
+        muiEditTextFieldProps: {
+          required: true,
+          error: !!validationErrors?.comentario_codelco,
+          helperText: validationErrors?.comentario_codelco,
+        },
+      },
+      {
+        accessorKey: 'comentario_eecc',
+        header: 'Respuesta EECC',
+        enableEditing: false,
         muiEditTextFieldProps: {
           required: false,
         },
@@ -119,9 +135,20 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
 
     transformedValues['daily_id'] = idDaily;
     transformedValues['user_id'] = currentUser.id;
-    transformedValues['comentario'] = values['comentario'];
+    transformedValues['comentario_codelco'] = values['comentario_codelco'];
+    transformedValues['comentario_eecc'] = values['respuesta_eecc'];
+    transformedValues['revision'] = fetchedData.daily_info.revision;
+    transformedValues['role_id'] = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+
+
     const transformedValuesObj = Object.assign({}, transformedValues);
 
+    const newValidationErrors = validateComentario(values['comentario_codelco']);
+
+    if (Object.values(newValidationErrors).some((error) => error)) {
+      setValidationErrors(newValidationErrors);
+      return;
+    }
 
     await createField(transformedValuesObj);
     toast.success('Campos creados exitosamente');
@@ -132,30 +159,48 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
 
 
   const handleSaveField = async ({ values, row, table }) => {
-    // console.log('valuesHandleSave', values);
     //este es el id correlativo que da la tabla
     const rowId = row.id;
     // este es el id de la row de la base de datos
-    // const idname = `id-${idSheet}`;
     const idValue = row.original['id'];
+    const id_user_comments = row.original['user_id'];
+    const current_user_id = currentUser.id;
+
+    //si el usuario no es el mismo que creo el comentario no puede editarlo
+    if (id_user_comments !== current_user_id) {
+      toast.error('No puedes editar comentarios de otro usuario');
+      table.setEditingRow(null);
+      return;
+    }
+    //si la revision es distinta no puede editar
+    if (fetchedData.daily_info.revision !== values['revision']) {
+      toast.error('No puedes editar comentarios de otra revisión');
+      table.setEditingRow(null);
+      return;
+    }
+
+
 
 
     var transformedValues = [];
 
-    transformedValues['daily_id'] = idDaily;
-    transformedValues['daily_sheet_id'] = idSheet;
-    transformedValues['id'] = idValue;
-    const transformedValuesObj = Object.assign({}, transformedValues);
-
-    // console.log('handlesave  transformedValuesObj', transformedValuesObj);
-
-
-    const newValidationErrors = validateCurrentSheetFields(idSheet, fetchedData.fields, values);
+    const newValidationErrors = validateComentario(values['comentario_codelco']);
 
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
       return;
     }
+
+
+    transformedValues['daily_id'] = idDaily;
+    transformedValues['user_id'] = currentUser.id;
+    transformedValues['comentario_codelco'] = values['comentario_codelco'];
+    transformedValues['comentario_eecc'] = values['respuesta_eecc'];
+    transformedValues['revision'] = values['revision'];
+    transformedValues['role_id'] = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    transformedValues['id'] = idValue;
+    const transformedValuesObj = Object.assign({}, transformedValues);
+
 
     await updateField(transformedValuesObj);
     toast.success('Actualizado exitosamente');
@@ -163,9 +208,17 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
     setValidationErrors({});
   };
   const openDeleteConfirmModal = (row) => {
+
+    const id_user_comments = row.original['user_id'];
+    const current_user_id = currentUser.id;
+    if (id_user_comments !== current_user_id) {
+      toast.error('No puedes editar comentarios de otro usuario');
+      table.setEditingRow(null);
+      return;
+    }
+
     if (window.confirm('¿Estás seguro de que quieres eliminar este campo?')) {
-      const idname = `id-${idSheet}`;
-      const idValue = row.original[idname];
+      const idValue = row.original['id'];
       deleteField({ row: idValue });
     }
   };
@@ -184,14 +237,26 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
   }, [sorting]);
 
 
-  const sendData = async () => {
-    console.log('fetchedData', fetchedData);
-    //const response = await axios.post(`${BASE_URL}/revisarDaily/${rol_info.id}/${idDaily}`);
+  const aprobarDaily = async () => {
+    const role_id = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    const respuesta = 'Aprobado';
+    const user_id = currentUser.id;
+    const revision = fetchedData.daily_info.revision;
+    const response = await axios.post(`${BASE_URL}/aprobarDaily/${idDaily}/${respuesta}/${role_id}/${user_id}/${revision}`);
 
-    if (response.status === 200) {
-      //navigate(`/RevDailyRevisado/${idDaily}/${contract_id}/${fetchedData.state_id}/${nombreArea}`);
-    }
-}
+    navigate(`/AproDailyAproRech/${idDaily}/${contract_id}/${respuesta}`);
+  }
+
+  const rechazarDaily = async () => {
+    const role_id = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    const respuesta = 'Rechazado';
+    const user_id = currentUser.id;
+    const revision = fetchedData.daily_info.revision;
+
+    const response = await axios.post(`${BASE_URL}/aprobarDaily/${idDaily}/${respuesta}/${role_id}/${user_id}/${revision}`);
+
+      navigate(`/AproDailyAproRech/${idDaily}/${contract_id}/${respuesta}`);
+  }
 
 
 
@@ -295,24 +360,39 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
       <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
 
 
-          <Tooltip title="Enviar Daily Report">
-            <Button
-              id="guardarCambiosButton"
-              startIcon={<SaveIcon />}
-              style={{ backgroundColor: '#388e3c' }}
-              variant="contained"
-              onClick={() => {
-                if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
-                  sendData();
-                  alert('Cambios guardados exitosamente');
-                }
-              }}
-            >
-              Aprobar Daily Report
-            </Button>
-          </Tooltip>
-    
-       
+        <Tooltip title="Enviar Daily Report" sx={{m:'2rem'}}>
+          <Button
+            id="aprobarButton"
+            startIcon={<CheckCircleIcon />}
+            style={{ backgroundColor: '#388e3c' }}
+            variant="contained"
+            onClick={() => {
+              if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
+                aprobarDaily();
+              }
+            }}
+          >
+            Aprobar Daily Report
+          </Button>
+        </Tooltip>
+        <Tooltip title="Enviar Daily Report" sx={{m:'2rem'}}>
+          <Button
+            id="rechazarButton"
+            startIcon={<CancelIcon />}
+
+            variant="contained"
+            color="error"
+            onClick={() => {
+              if (window.confirm('Al confirmar, se declará rechazado el Daily Report. ¿Estás seguro de querer continuar?')) {
+                rechazarDaily();
+              }
+            }}
+          >
+            Rechazar Daily Report
+          </Button>
+        </Tooltip>
+
+
       </Box>
       <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
         <MaterialReactTable table={table} />
@@ -343,7 +423,8 @@ function useGetRows(idDaily, idSheet,) {
 
       return {
         comentarios: comentarios,
-        state_id: state_id
+        state_id: state_id,
+        daily_info: Daily_info
       };
 
     },
@@ -373,7 +454,7 @@ function useUpdateField() {
 
   return useMutation({
     mutationFn: async (field) => {
-      const response = await axios.put(`${BASE_URL}/updateValues`, field);
+      const response = await axios.put(`${BASE_URL}/comentarios/update`, field);
       return response.data;
     },
     onMutate: async (newFieldInfo) => {
@@ -398,9 +479,9 @@ function useUpdateField() {
 function useDeleteField() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ row, daily_id, daily_sheet_id }) => {
+    mutationFn: async ({ row }) => {
       console.log('row:', row);
-      await axios.delete(`${BASE_URL}/values`, {
+      await axios.delete(`${BASE_URL}/comentarios`, {
         data: { row }
       });
     },
@@ -436,22 +517,25 @@ const Table = ({ data, idDaily, contract_id, currentUser }) => {
   }
   return (
     <QueryClientProvider client={queryClient}>
-      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} currentUser={currentUser}  />
+      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} currentUser={currentUser} />
     </QueryClientProvider>
   );
 };
 
 export default Table;
 
-const validateRequired = (value) => !!value.length;
-const validateEmail = (email) =>
-  !!email.length &&
-  email
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    );
+function validateComentario( comentario_codelco) {
+  const validationErrorsVar = {};
+    if (!comentario_codelco) {
+      validationErrorsVar['comentario_codelco'] = `Comentario Codelco es requerido`;
 
+     } else {
+        delete validationErrorsVar['comentario_codelco'];
+      }
+  console.log(validationErrorsVar);
+
+  return validationErrorsVar;
+}
 
 
 

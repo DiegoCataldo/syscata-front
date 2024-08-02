@@ -21,7 +21,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
-  const[rol_info, setRol_info] = useState(0);
+  const [rol_info, setRol_info] = useState(0);
   const { accessToken, currentUser } = useContext(AuthContext);
 
 
@@ -45,14 +45,14 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   };
 
   useEffect(() => {
-   // console.log('entro al useEffect');
-    fetchStepsAndFields(); 
+    // console.log('entro al useEffect');
+    fetchStepsAndFields();
 
-    
-}, [id]);
 
-const fetchStepsAndFields = async () => {
-  try { 
+  }, [id]);
+
+  const fetchStepsAndFields = async () => {
+    try {
       const response = await axios.get(`${BASE_URL}/Dailys/${id}/dailyStructure`)
       const stepsOrdenados = response.data.steps.map((step) => {
         return {
@@ -60,8 +60,8 @@ const fetchStepsAndFields = async () => {
           fields: step.fields.sort((a, b) => a.step - b.step)
         };
       });
-      
-//le agrego un paso de resumen al final
+
+      //le agrego un paso de resumen al final
       const FinalizarStep = {
         idSheet: 'resumen',
         sheet: 'Resumen',
@@ -73,26 +73,26 @@ const fetchStepsAndFields = async () => {
         idSheet: 'comentarios',
         sheet: 'Comentarios',
       };
-       updatedStepsOrdenados = [...updatedStepsOrdenados, ComentariosStep];
+      updatedStepsOrdenados = [...updatedStepsOrdenados, ComentariosStep];
 
       setSteps(updatedStepsOrdenados);
 
       const responseRol = await axios.get(`${BASE_URL}/getRolinfo/${role_id}`)
-     // console.log('responseRol', responseRol.data);
+      // console.log('responseRol', responseRol.data);
       setRol_info(responseRol.data);
 
-  } catch (error) {
+    } catch (error) {
       console.error('Error al obtener pasos y campos:', error);
-  }
-};
+    }
+  };
 
   const handleNext = () => {
 
     const newActiveStep =
-    isLastStep() && !allStepsCompleted()
-      ?  activeStep + 0
-      : activeStep + 1;
-  setActiveStep(newActiveStep);
+      isLastStep() && !allStepsCompleted()
+        ? activeStep + 0
+        : activeStep + 1;
+    setActiveStep(newActiveStep);
 
   };
 
@@ -101,7 +101,7 @@ const fetchStepsAndFields = async () => {
   };
 
   const handleStep = (step) => () => {
-    
+
     setActiveStep(step);
   };
 
@@ -111,28 +111,29 @@ const fetchStepsAndFields = async () => {
   };
 
   const formContent = (step) => {
-    if(steps.length === 0){
-      return <h2>Cargando...</h2>}
-
-    if(steps[step].idSheet === 'resumen'){
-      return <TableResumen data={steps } idDaily = {id} contract_id = {contract_id} />;
-    }if(steps[step].idSheet === 'comentarios'){
-      return <TableComentarios data={steps } idDaily = {id} contract_id = {contract_id} currentUser = {currentUser} rol_info ={rol_info} />;
-    }else{
-      return <TableSteps  data={steps[step]} idDaily = {id} contract_id = {contract_id} />;
+    if (steps.length === 0) {
+      return <h2>Cargando...</h2>
     }
-    
+
+    if (steps[step].idSheet === 'resumen') {
+      return <TableResumen data={steps} idDaily={id} contract_id={contract_id} />;
+    }else if (steps[step].idSheet === 'comentarios') {
+      return <TableComentarios data={steps} idDaily={id} contract_id={contract_id} currentUser={currentUser} rol_info={rol_info} />;
+    } else {
+      return <TableSteps data={steps[step]} idDaily={id} contract_id={contract_id} />;
+    }
+
   };
 
   return (
     <Box
-   // onSubmit=""
-    sx={{ width: '90%', margin: '0 auto' }}
-  >   <h2 style={{ textAlign: 'center' }}>Revisar Daily</h2>
+      // onSubmit=""
+      sx={{ width: '90%', margin: '0 auto' }}
+    >   <h2 style={{ textAlign: 'center' }}>Revisar Daily</h2>
 
       <Box
         component="form"
-       // onSubmit=""
+        // onSubmit=""
         sx={{ width: '95%', margin: '0 auto' }}
       >
         <Box sx={{ width: '100%' }}>
@@ -146,31 +147,31 @@ const fetchStepsAndFields = async () => {
             ))}
           </Stepper>
           <div>
-              <React.Fragment>
-                <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button
-                    color="inherit"
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    sx={{ mr: 1 }}
-                  >
-                    Back
-                  </Button>
-                  <Box sx={{ flex: '1 1 auto' }} />
-                  <Button onClick={handleNext }   disabled={isLastStep()} sx={{ mr: 1 }}>
-                    Next
-                  </Button>
-
-                </Box>
-                <Grid
-                  item
-                  xs={12}
-                  sx={{ padding: '20px' }}
+            <React.Fragment>
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                <Button
+                  color="inherit"
+                  disabled={activeStep === 0}
+                  onClick={handleBack}
+                  sx={{ mr: 1 }}
                 >
-                  {formContent(activeStep)}
-                </Grid>
+                  Back
+                </Button>
+                <Box sx={{ flex: '1 1 auto' }} />
+                <Button onClick={handleNext} disabled={isLastStep()} sx={{ mr: 1 }}>
+                  Next
+                </Button>
 
-              </React.Fragment>
+              </Box>
+              <Grid
+                item
+                xs={12}
+                sx={{ padding: '20px' }}
+              >
+                {formContent(activeStep)}
+              </Grid>
+
+            </React.Fragment>
 
           </div>
         </Box>

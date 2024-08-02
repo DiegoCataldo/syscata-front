@@ -14,7 +14,7 @@ import ContractsPage from "./pages/Configurar/ContractsPage"
 import UserPage from "./pages/Configurar/UsersPage"
 import UserFormPage from "./pages/Configurar/UserCUPage"
 import ContractFormato from "./pages/Configurar/ContractEstructuraPage"
-import EECCDailys from "./pages/EECC/EECCDailysPage"
+import EECCDailys from "./pages/EECC/EECCListaDailysPage"
 import EECCIngresarDaily from "./pages/EECC/EECCIngresarDailyPage"
 import EECCContracts from "./pages/EECC/EECCContractsPage"
 import EECCdailyEnviado from "./pages/EECC/EECCDailyEnviado"
@@ -27,6 +27,12 @@ import RevDailyRevisado  from "./pages/Revisor/RevDailyRevisadoPage"
 import AproContracts from "./pages/Aprobador/AproContractsPage"
 import AproListaDailys from "./pages/Aprobador/AproListaDailysPage"
 import AproAprobarDaily  from "./pages/Aprobador/AproAprobarDailyPage"
+import AproDailyAproRech  from "./pages/Aprobador/AproDailyAproRechPage"
+import VisContracts from "./pages/Visualizar/VisContractsPage"
+import VisListaDailys from "./pages/Visualizar/VisListaDailysPage"
+import VisVerDaily from "./pages/Visualizar/VisVerDailyPage"
+
+
 
 
 
@@ -89,9 +95,10 @@ function App() {
                     <Route path="/AproContracts/" element={<ProtectedRoute><AproContracts/></ProtectedRoute>} />
                     <Route path="/AproListaDailys/:contract_id" element={<ProtectedRoute><AproListaDailys/></ProtectedRoute>} />
                     <Route path="/AproAprobarDaily/:id/:contract_id" element={<ProtectedRoute><AproAprobarDaily/></ProtectedRoute>} />
-
-
-
+                    <Route path="/AproDailyAproRech/:daily_id/:contract_id/:respuesta/" element={<ProtectedRoute><AproDailyAproRech/></ProtectedRoute>} />    
+                    <Route path="/VisContracts/" element={<ProtectedRoute><VisContracts/></ProtectedRoute>} />    
+                    <Route path="/VisListaDailys/:id" element={<ProtectedRoute><VisListaDailys /></ProtectedRoute>} />
+                    <Route path="/VisVerDaily/:daily_id/:contract_id" element={<ProtectedRoute><VisVerDaily/></ProtectedRoute>} />
 
 
                     <Route path="*" element={<Navigate to="/login" />} />

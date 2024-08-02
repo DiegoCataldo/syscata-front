@@ -32,7 +32,8 @@ import { useNavigate } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
 
 
-const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }) => {
+
+const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [availableDailys, setAvailableDailys] = useState([]);
@@ -60,22 +61,16 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
 
         muiEditTextFieldProps: {
           required: false,
-
-          //optionally add validation checking for onBlur or onChange
         },
       },
-
       {
         accessorKey: 'user_name',
         header: 'Nombre Revisor',
         enableEditing: false,
         muiEditTextFieldProps: {
           required: false,
-
-          //optionally add validation checking for onBlur or onChange
         },
       },
-
       {
         accessorKey: 'role_name',
         header: 'Rol Revisor',
@@ -84,16 +79,12 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
           required: false,
         },
       },
-
       {
         accessorKey: 'comentario_codelco',
         header: 'Comentario Codelco',
-
-        //remove any previous validation errors when user focuses on the input
-
-
+        enableEditing: false,
         muiEditTextFieldProps: {
-          required: true,
+          required: false,
           error: !!validationErrors?.comentario_codelco,
           helperText: validationErrors?.comentario_codelco,
         },
@@ -101,7 +92,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
       {
         accessorKey: 'comentario_eecc',
         header: 'Respuesta EECC',
-        enableEditing: false,
+        enableEditing: true,
         muiEditTextFieldProps: {
           required: false,
         },
@@ -120,22 +111,19 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
     isError: isLoadingUsersError,
     isFetching: isFetchingUsers,
     isLoading: isLoadingUsers,
-  } = useGetRows(idDaily, idSheet, rol_info);
+  } = useGetRows(idDaily, idSheet);
 
   // Hooks y manejadores de Crear, Actualizar, Eliminar
   const { mutateAsync: createField, isPending: isCreatingField } = useCreateField();
   const { mutateAsync: updateField, isPending: isUpdatingField } = useUpdateField();
   const { mutateAsync: deleteField, isPending: isDeletingField } = useDeleteField();
 
-
+ /* este no se usa ya que no la EECC no crea comentarios
   const handleCreateField = async ({ values, table, idSheet }) => {
-
-
     var transformedValues = [];
 
     transformedValues['daily_id'] = idDaily;
     transformedValues['user_id'] = currentUser.id;
-    transformedValues['role_id'] = rol_info.id;
     transformedValues['comentario_codelco'] = values['comentario_codelco'];
     transformedValues['comentario_eecc'] = values['respuesta_eecc'];
     transformedValues['revision'] = fetchedData.daily_info.revision;
@@ -148,15 +136,13 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
       setValidationErrors(newValidationErrors);
       return;
     }
-
-
     await createField(transformedValuesObj);
     toast.success('Campos creados exitosamente');
     table.setCreatingRow(null);
     resetRowValues();
     setValidationErrors({});
   };
-
+*/
 
   const handleSaveField = async ({ values, row, table }) => {
     // console.log('valuesHandleSave', values);
@@ -169,32 +155,18 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
     const current_user_id = currentUser.id;
 
 
-    if (id_user_comments !== current_user_id) {
-      toast.error('No puedes editar comentarios de otro usuario');
-      resetRowValues();
-      //table.setEditingRow(null);
-      return;
-    }
-    if (fetchedData.daily_info.revision !== values['revision']) {
-      toast.error('No puedes editar comentarios de otra revisión');
-      resetRowValues();
-      //table.setEditingRow(null);
-      return;
-    }
 
-console.log('paso');
     var transformedValues = [];
 
     transformedValues['daily_id'] = idDaily;
     transformedValues['user_id'] = currentUser.id;
     transformedValues['comentario_codelco'] = values['comentario_codelco'];
-    transformedValues['comentario_eecc'] = values['respuesta_eecc'];
+    transformedValues['comentario_eecc'] = values['comentario_eecc'];
     transformedValues['revision'] = values['revision'];
-    transformedValues['role_id'] = rol_info.id; //esto quizas cambiarlo luego a que lo traiga desde current_user
     transformedValues['id'] = idValue;
     const transformedValuesObj = Object.assign({}, transformedValues);
 
-    const newValidationErrors = validateComentario(values['comentario_codelco']);
+    const newValidationErrors = validateComentario(values['comentario_eecc']);
 
     if (Object.values(newValidationErrors).some((error) => error)) {
       setValidationErrors(newValidationErrors);
@@ -206,8 +178,9 @@ console.log('paso');
     table.setEditingRow(null);
     setValidationErrors({});
   };
-  const openDeleteConfirmModal = (row) => {
 
+  const openDeleteConfirmModal = (row) => {
+   
     const id_user_comments = row.original['user_id'];
     const current_user_id = currentUser.id;
     if (id_user_comments !== current_user_id) {
@@ -223,21 +196,7 @@ console.log('paso');
   };
   const rowVirtualizerInstanceRef = useRef(null);
 
-  useEffect(() => {
-    //scroll to the top of the table when the sorting changes
 
-    if (!rol_info) return;
-    if (rol_info.name === 'revisor_pyc') {
-      setNombreArea('Área de P&C');
-    } else if (rol_info.name === 'revisor_cc') {
-      setNombreArea('Área de Construcción');
-    } else if (rol_info.name === 'revisor_otra_area') {
-      setNombreArea('Área Otra');
-    } else if (rol_info.name === 'revisor_rrll') {
-      setNombreArea('Área de Relaciones Laborales');
-    }
-
-  }, [rol_info]);
 
   useEffect(() => {
     //scroll to the top of the table when the sorting changes
@@ -251,20 +210,6 @@ console.log('paso');
   }, [sorting, validationErrors]);
 
 
-  const sendData = async () => {
-    console.log('fetchedData', fetchedData);
-
-
-
-    const user_id = currentUser.id;
-    const revision = fetchedData.daily_info.revision;
-
-    const response = await axios.post(`${BASE_URL}/revisarDaily/${rol_info.id}/${idDaily}/${user_id}/${revision}`);
-
-    if (response.status === 200) {
-      navigate(`/RevDailyRevisado/${idDaily}/${contract_id}/${fetchedData.state_id}/${nombreArea}`);
-    }
-  }
 
 
 
@@ -338,19 +283,12 @@ console.log('paso');
               <EditIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Eliminar">
-            <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
+         
         </Box>
       </div>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Box sx={{ display: 'flex', gap: '1rem' }}>
-        <Button variant="contained" onClick={() => table.setCreatingRow(true)}>
-          NUEVO REGISTRO
-        </Button>
 
       </Box>
 
@@ -366,26 +304,6 @@ console.log('paso');
   return (
     <Box sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}>
       <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-
-        {fetchedData.Daily_revisado_area === 'No' && (
-          <Tooltip title="Enviar Daily Report">
-            <Button
-              id="guardarCambiosButton"
-              startIcon={<SaveIcon />}
-              style={{ backgroundColor: '#388e3c' }}
-              variant="contained"
-              onClick={() => {
-                if (window.confirm('Al confirmar, se le confirmará al aprobador Codelco que el Daily Report se encuentra revisado por tu área. ¿Estás seguro de querer continuar?')) {
-                  sendData();
-
-                }
-              }}
-            >
-              Declarar Revisado por {nombreArea}
-            </Button>
-          </Tooltip>
-        )}
-
       </Box>
       <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
         <MaterialReactTable table={table} />
@@ -396,7 +314,7 @@ console.log('paso');
 
 
 //READ hook (get fields from api)
-function useGetRows(idDaily, idSheet, rol_info) {
+function useGetRows(idDaily, idSheet) {
 
   return useQuery({
     queryKey: ['fields', idSheet],
@@ -411,20 +329,6 @@ function useGetRows(idDaily, idSheet, rol_info) {
       console.log('Daily_info:', Daily_info);
       const state_id = Daily_info.state_id;
       var Daily_revisado_area = 'No';
-
-      //revisar si el daily esta revisado en el area del usuario
-      if (rol_info.name === 'revisor_pyc' && Daily_info.revisado_pyc === 'Si') {
-        Daily_revisado_area = 'Si';
-      } else if (rol_info.name === 'revisor_cc' && Daily_info.revisado_cc === 'Si') {
-        Daily_revisado_area = 'Si';
-      } else if (rol_info.name === 'revisor_otra_area' && Daily_info.revisado_otro === 'Si') {
-        Daily_revisado_area = 'Si';
-      } else if (rol_info.name === 'revisor_rrll' && Daily_info.revisado_rrll === 'Si') {
-        Daily_revisado_area = 'Si';
-      } else {
-        Daily_revisado_area = 'No';
-      }
-
 
 
       return {
@@ -511,12 +415,12 @@ function useDeleteField() {
 }
 
 const queryClient = new QueryClient();
-const Table = ({ data, idDaily, contract_id, currentUser, rol_info }) => {
+const Table = ({ data, idDaily, contract_id, currentUser }) => {
   if (!data) return null;
   let fields = []
 
   console.log('currentUser', currentUser);
-  console.log('rol_info', rol_info);
+
 
   const idSheet = data.idSheet;
 
@@ -525,21 +429,21 @@ const Table = ({ data, idDaily, contract_id, currentUser, rol_info }) => {
   }
   return (
     <QueryClientProvider client={queryClient}>
-      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} currentUser={currentUser} rol_info={rol_info} />
+      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} currentUser={currentUser}  />
     </QueryClientProvider>
   );
 };
 
 export default Table;
 
-function validateComentario(comentario_codelco) {
+function validateComentario( comentario_codelco) {
   const validationErrorsVar = {};
-  if (!comentario_codelco) {
-    validationErrorsVar['comentario_codelco'] = `Comentario Codelco es requerido`;
+    if (!comentario_codelco) {
+      validationErrorsVar['comentario_eecc'] = `Respuesta EECC es requerido`;
 
-  } else {
-    delete validationErrorsVar['comentario_codelco'];
-  }
+     } else {
+        delete validationErrorsVar['comentario_eecc'];
+      }
 
   return validationErrorsVar;
 }

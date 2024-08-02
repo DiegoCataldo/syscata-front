@@ -1,5 +1,5 @@
 import React, { useEffect, useState }  from 'react';
-import DailysTable from '../../Components/Containers/Aprobador/AproListaDailysTable';
+import DailysTable from '../../Components/Containers/EECC/EECCDailysTable';
 import { Box, Button } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -11,7 +11,7 @@ const ContractsPage = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
-    const { contract_id } = useParams(); //idContract
+    const { id } = useParams(); //idContract
 
 
     useEffect(() => {
@@ -21,10 +21,10 @@ const ContractsPage = () => {
 
     const fetchDailys = async (page, rowsPerPage) => {
         try {
-            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
+            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${id}&page=${page}&per_page=${rowsPerPage}`);
             const dailys = response.data.data;
-            console.log(dailys);
-            const filteredDailys = dailys.filter(daily => daily.state_id === 2 || daily.state_id === 3);
+            const filteredDailys = dailys.filter(daily => daily.state_id === 1);
+
             setDailys(filteredDailys);
             setTotalCount(response.data.total);
         } catch (error) {
@@ -46,7 +46,7 @@ const ContractsPage = () => {
         <Box
          sx={{ width: '95%', margin: '0 auto', mt: 4}}>
         <div>
-            <h2>Aprobar Daily Report</h2>
+            <h2>Ingresar Daily Report</h2>
             <Box display="flex" justifyContent="flex-end" mb={2}>
 
             </Box>
