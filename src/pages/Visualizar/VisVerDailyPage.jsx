@@ -7,6 +7,8 @@ import { Link, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Chip, Checkbox, FormControlLabel, IconButton, Tooltip } from '@mui/material';
 import TableEECC from '../../Components/Containers/Visualizar/VisVerDailyTable'
 import TableResumen from '../../Components/Containers/Visualizar/VisverDailyResumen'
+import TableComentarios from '../../Components/Containers/Visualizar/VisVerCommentsTable'
+
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 
@@ -54,12 +56,20 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
         };
       });
 
-      //le agrego un paso de resumen al ultimo
+      //le agrego un paso de resumen al final
       const FinalizarStep = {
         idSheet: 'resumen',
         sheet: 'Resumen',
       };
-      const updatedStepsOrdenados = [...stepsOrdenados, FinalizarStep];
+      let updatedStepsOrdenados = [...stepsOrdenados, FinalizarStep];
+
+      //le agrego un paso de comentarios al final
+      const ComentariosStep = {
+        idSheet: 'comentarios',
+        sheet: 'Comentarios',
+      };
+      updatedStepsOrdenados = [...updatedStepsOrdenados, ComentariosStep];
+
       setSteps(updatedStepsOrdenados);
 
     } catch (error) {
@@ -91,6 +101,9 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
 
     if (steps[step].idSheet === 'resumen') {
       return <TableResumen data={steps} idDaily={daily_id} contract_id={contract_id} />;
+    }else if (steps[step].idSheet === 'comentarios') {
+      return <TableComentarios data={steps} idDaily={daily_id} contract_id={contract_id}  />;
+    
     } else {
       return <TableEECC data={steps[step]} idDaily={daily_id} contract_id={contract_id} />;
     }

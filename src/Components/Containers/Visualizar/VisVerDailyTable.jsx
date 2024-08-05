@@ -28,6 +28,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
 
 const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -263,6 +267,31 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     }
   }, [sorting]);
 
+  const csvConfig = mkConfig({
+    fieldSeparator: ',',
+    decimalSeparator: '.',
+    useKeysAsHeaders: true,
+  });
+
+  const handleExportPDF = (rows) => {
+    const doc = new jsPDF();
+    const tableData = rows.map((row) => Object.values(row.original));
+    const tableHeaders = columns.map((c) => c.header);
+
+    autoTable(doc, {
+      head: [tableHeaders],
+      body: tableData,
+    });
+
+    doc.save('mrt-pdf-example.pdf');
+  };
+
+  const handleExportCSV = () => {
+    const csv = generateCsv(csvConfig)(fetchedData.rows);
+    download(csvConfig)(csv);
+  };
+
+
   const table = useMaterialReactTable({
     columns,
     data: fetchedData.rows ? fetchedData.rows : [],
@@ -282,6 +311,36 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     rowVirtualizerOptions: { overscan: 5 }, //optionally customize the row virtualizer
     columnVirtualizerOptions: { overscan: 2 }, //optionally customize the column virtualizer
     enableRowVirtualization: true,
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '16px',
+          padding: '8px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <Button
+          disabled={table.getPrePaginationRowModel().rows.length === 0}
+          //export all rows, including from the next page, (still respects filtering and sorting)
+          onClick={() =>
+            handleExportPDF(table.getPrePaginationRowModel().rows)
+          }
+          startIcon={<FileDownloadIcon />}
+        >
+          Exportar a PDF
+        </Button>
+        <Button
+
+          //export all rows as seen on the screen (respects pagination, sorting, filtering, etc.)
+          onClick={handleExportCSV}
+          startIcon={<FileDownloadIcon />}
+        >
+          Exportar a CSV
+        </Button>
+
+      </Box>
+    ),
     onSortingChange: setSorting,
     getRowId: (row) => row.id,
     enableRowNumbers: true,
@@ -306,7 +365,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
         border: '0.01px solid rgba(81, 81, 81, .08)',
       },
     },
-   
+
     state: {
       isLoading: isLoadingUsers,
       showAlertBanner: isLoadingUsersError,
@@ -381,8 +440,8 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   return (
     <>
       <MaterialReactTable table={table} />
-      
-    
+
+
     </>
   );
 };

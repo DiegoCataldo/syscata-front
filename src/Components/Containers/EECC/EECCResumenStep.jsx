@@ -105,6 +105,40 @@ const TableMaquinas = ({ data }) => {
     return <MaterialReactTable table={table} />;
 }
 
+const TableAvances = ({ data }) => {
+
+
+    const columns = useMemo(
+        () => [
+            {
+                accessorKey: 'categoria',
+                header: 'Categoría',
+            },
+          
+            {
+                accessorKey: 'cantidad',
+                header: 'cantidad',
+            }
+
+        ],
+        [],
+        //end
+    );
+
+    const table = useMaterialReactTable({
+        columns,
+        data: data,
+        enableExpandAll: false, //hide expand all double arrow in column header
+        enableExpanding: true,
+        filterFromLeafRows: true, //apply filtering to all rows instead of just parent rows
+        getSubRows: (row) => row.subRows, //default
+        initialState: { expanded: false }, //expand all rows by default
+        paginateExpandedRows: false, //When rows are expanded, do not count sub-rows as number of rows on the page towards pagination
+    });
+
+    return <MaterialReactTable table={table} />;
+}
+
 const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) => {
     const navigate = useNavigate();
 
@@ -112,6 +146,7 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
     const [rows, setRows] = useState([]);
     const [dataResumenPersonal, setDataResumenPersonal] = useState([]);
     const [dataResumenMaquinas, setDataResumenMaquinas] = useState([]);
+    const [dataResumenAvances, setDataResumenAvances] = useState([]);
 
     useEffect(() => {
         fetchStepsAndFields();
@@ -340,7 +375,77 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
 
 
     }
+    const calcularDataAvances = (dataAvances, keysArray) => {
 
+        const CantidadName = `Cantidad-${keysArray[3]}`;
+
+
+        //defino los nombres de las fields
+        const unidadName = `Unidad-${keysArray[3]}`;
+        const itemName = `Item-${keysArray[3]}`;
+
+        //sumo todas las cantidades
+        const sumTotalCantidad = dataAvances.reduce((sum, row) => {
+            const hm = parseFloat(row[CantidadName]) || 0;
+            return sum + hm;
+        }, 0);
+
+        // Agrupo por Unidad y sumo la cantidad
+        const groupedUnidad = dataAvances.reduce((acc, row) => {
+            const unidad = row[unidadName];
+            const cantidad = parseFloat(row[CantidadName]) || 0;
+            if (!acc[unidad]) {
+                acc[unidad] = { categoria: unidad, cantidad: 0,  subRows: [] };
+            }
+            acc[unidad].cantidad += cantidad;
+            acc[unidad].subRows.push(row);
+            return acc;
+        }, {});
+
+
+        
+        // por cada field area agrupo por equipo y sumo las HH trabajadas
+        const subRows = Object.values(groupedUnidad).map(unidad => {
+            // Agrupar subRows por área y sumar HH Trabajadas
+            const groupedItem = unidad.subRows.reduce((acc, row) => {
+                const item = row[itemName];
+                const cantidad = parseFloat(row[CantidadName]) || 0;
+                if (!acc[item]) {
+                    acc[item] = { categoria: item, cantidad: 0};
+                }
+                acc[item].cantidad += cantidad;
+                return acc;
+            }, {});
+
+            const subRowsByItem = Object.values(groupedItem);
+
+            return {
+                categoria: unidad.categoria,
+                cantidad: unidad.cantidad,
+                subRows: subRowsByItem
+            };
+        });
+
+
+       
+/*
+        const data = [
+            {
+                categoria: 'Total',
+                HMoperativas: sumTotalOper,
+                HMnoOperativas: sumTotalNoOper,
+                HMmantenimiento: sumTotalMant,
+                HMenPanne: sumTotalPanne,
+                HMtotales: sumTotalOper + sumTotalNoOper + sumTotalMant + sumTotalPanne,
+                subRows: subRows
+            }
+        ]; */
+
+        return subRows;
+
+
+
+    }
 
     const fetchStepsAndFields = async () => {
         try {
@@ -352,7 +457,7 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
                 };
             });
             var rowsResponse = response.data.values;
-            // console.log('rowsResponse', rowsResponse);
+            console.log('rowsResponse', rowsResponse);
 
             setSteps(stepsOrdenados);
             setRows(rowsResponse);
@@ -363,16 +468,22 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
             const dataPersonal = rowsResponse[keysArray[0]];
             const dataMaquinas = rowsResponse[keysArray[1]];
             const dataInterf = rowsResponse[keysArray[2]];
+            const dataAvances = rowsResponse[keysArray[3]];
+
+            console.log('dataAvances', dataAvances);
 
             //estructuro la data de la hoja personal
             const dataPersonalVar = calcularDataPersonal(dataPersonal, keysArray);
             //estructuro la data de la hoja maquinas
             const dataMaquinasVar = calcularDataMaquinas(dataMaquinas, keysArray);
+            //estructuro la data de la hoja maquinas
+            const dataAvancesVar = calcularDataAvances(dataAvances, keysArray);
 
             setDataResumenPersonal(dataPersonalVar);
             setDataResumenMaquinas(dataMaquinasVar);
+            setDataResumenAvances(dataAvancesVar);
             //console.log('dataPersonalVar', dataPersonalVar);
-            console.log('dataMaquinasVar', dataMaquinasVar);
+            console.log('dataAvancesVar', dataAvancesVar);
 
 
 
@@ -382,7 +493,6 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
             console.error('Error al obtener pasos y campos:', error);
         }
     }
-
 
     const sendData = async () => {
         const user_id = currentUser.id;
@@ -396,41 +506,41 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
         }
     }
 
-
-
-
     return (
         <Box
-        sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}
-    >
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-            <Tooltip title="Enviar Daily Report">
-                <Button
-                    id="guardarCambiosButton"
-                    startIcon={<SaveIcon />}
-                    style={{ backgroundColor: '#388e3c' }}
-                    variant="contained"
-                    onClick={() => {
-                        if (window.confirm('¿Estás seguro de guardar los cambios?')) {
-                            sendData();
-                        }
-                    }}
-                >
-                    Enviar Daily Report
-                </Button>
-            </Tooltip>
+            sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}
+        >
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
+                <Tooltip title="Enviar Daily Report">
+                    <Button
+                        id="guardarCambiosButton"
+                        startIcon={<SaveIcon />}
+                        style={{ backgroundColor: '#388e3c' }}
+                        variant="contained"
+                        onClick={() => {
+                            if (window.confirm('¿Estás seguro de guardar los cambios?')) {
+                                sendData();
+                            }
+                        }}>
+                        Enviar Daily Report
+                    </Button>
+                </Tooltip>
+            </Box>
+            <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+                    <h3>Resumen Personal</h3>
+                    <TablePersonal data={dataResumenPersonal} />
+                </div>
+                <div style={{ textAlign: 'center' , marginBottom: '4rem' }}>
+                    <h3>Resumen Maquinarias</h3>
+                    <TableMaquinas data={dataResumenMaquinas} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                    <h3>Resumen Avances</h3>
+                    <TableAvances data={dataResumenAvances} />
+                </div>
+            </Box>
         </Box>
-        <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <h3>Resumen Personal</h3>
-                <TablePersonal data={dataResumenPersonal} />
-            </div>
-            <div style={{ textAlign: 'center' }}>
-                <h3>Resumen Maquinarias</h3>
-                <TableMaquinas data={dataResumenMaquinas} />
-            </div>
-        </Box>
-    </Box>
     );
 
 
