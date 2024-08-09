@@ -73,6 +73,26 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
       };
       updatedStepsOrdenados = [...updatedStepsOrdenados, FinalizarStep];
 
+
+      const responseItem = await axios.get(`${BASE_URL}/getItems/${id}`);
+      let items = responseItem.data;
+      //asigno el nombre de items.item a el campo item.value
+      items.forEach((item, index) => {
+        items[index].value = item.item;
+        });
+        items.sort((a, b) => a.item.localeCompare(b.item));
+        
+        updatedStepsOrdenados.forEach((step) => {
+          if (step.sheet === "Avances") {
+            step.fields.forEach((field) => {
+              if (field.name === "Item") {
+                field.dropdown_lists = items;
+              }
+            });
+          }
+        });
+
+
       setSteps(updatedStepsOrdenados);
 
       const responseDaily = await axios.get(`${BASE_URL}/getDaily/${id}`)

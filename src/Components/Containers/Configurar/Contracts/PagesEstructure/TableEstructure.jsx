@@ -297,7 +297,7 @@ const Table = ({ handleCreateField, handleSaveField, openDeleteConfirmModal, fie
             <EditIcon />
           </IconButton>
         </Tooltip>
-        {row.original.field_type === 'list' && (
+        {row.original.field_type === 'list' && row.original.name != 'Item' && (
           <Tooltip title="Listas">
             <IconButton onClick={() => handleOpenModal(row)}>
               <ListIcon />

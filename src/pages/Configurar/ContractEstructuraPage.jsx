@@ -51,8 +51,30 @@ const ContractFormato = ({ onSubmit, users, companies }) => {
         setSteps(response.data.steps);
         if (objetoInicial.length === 0) {
           // Realiza una copia profunda de response.data.steps antes de establecer el estado
-          const stepsDeepCopy = JSON.parse(JSON.stringify(response.data.steps));
+          let stepsDeepCopy = JSON.parse(JSON.stringify(response.data.steps));
+          //obtener items
+          const responseItem = await axios.get(`${BASE_URL}/getItems/${id}`);
+          let items = responseItem.data;
+          //asigno el nombre de items.item a el campo item.value
+          items.forEach((item, index) => {
+            items[index].value = item.item;
+            });
+            
+            stepsDeepCopy.forEach((step) => {
+              if (step.sheet === "Avances") {
+                step.fields.forEach((field) => {
+                  if (field.name === "Item") {
+                    field.dropdown_lists = items;
+                  }
+                });
+              }
+            });
+            
+   
+
+
           setObjetoInicial(stepsDeepCopy);
+          console.log('stepsDeepCopy:', stepsDeepCopy);
         }
       } catch (error) {
         console.error('Error al obtener pasos y campos:', error);

@@ -254,8 +254,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     isLoading: isLoadingUsers,
   } = useGetRows(idDaily, idSheet);
 
-
-
   const rowVirtualizerInstanceRef = useRef(null);
 
   useEffect(() => {

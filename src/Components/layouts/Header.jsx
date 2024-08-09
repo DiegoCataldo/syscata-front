@@ -37,6 +37,8 @@ import ContentPasteGoIcon from '@mui/icons-material/ContentPasteGo';
 import ContentPasteSearchIcon from '@mui/icons-material/ContentPasteSearch';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import FireTruckIcon from '@mui/icons-material/FireTruck';
 import Collapse from '@mui/material/Collapse';
 import AGlogo from '../../assets/img/AG.png'
 import DTSlogo from '../../assets/img/DTS.png'
@@ -52,12 +54,17 @@ export default function Header() {
 
     const [openConfigurar, setOpenConfigurar] = React.useState(true);
     const [openDailys, setOpenDailys] = React.useState(true);
+    const [openPrograma, setOpenPrograma] = React.useState(true);
 
     const handleClickConfigurar = () => {
         setOpenConfigurar(!openConfigurar);
     };
     const handleClickDailys = () => {
         setOpenDailys(!openDailys);
+    };
+    const handleClickPrograma = () => {
+
+        setOpenPrograma(!openPrograma);
     };
 
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -299,6 +306,41 @@ export default function Header() {
                         </Collapse>
 
                            {/* TERMINA lista de Dailys */}
+
+
+                           
+                        {/* COMIENZA lista de Programa */}
+
+                        <ListItemButton onClick={handleClickPrograma}>
+                            <ListItemIcon sx={{ color: 'white' }}>
+                                <CalendarMonthIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Programa" />
+                            {openPrograma ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        <Collapse in={openPrograma} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
+                                <ListItem component={Link} to="/AvListaContracts" key="Avances" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <BadgeIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Avances" />
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem component={Link} to="/DotListaContracts"  key="Dotación" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <GroupIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Dotación" />
+                                    </ListItemButton>
+                                </ListItem>
+                                
+                            </List>
+                        </Collapse>
+
+                        {/* TERMINA lista de Programa */}
 
 
                     </List>

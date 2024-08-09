@@ -31,6 +31,15 @@ import AproDailyAproRech  from "./pages/Aprobador/AproDailyAproRechPage"
 import VisContracts from "./pages/Visualizar/VisContractsPage"
 import VisListaDailys from "./pages/Visualizar/VisListaDailysPage"
 import VisVerDaily from "./pages/Visualizar/VisVerDailyPage"
+import AvListaContracts from "./pages/Programa/Avance/AvListaContractsPage"
+import AvPrograma from "./pages/Programa/Avance/AvProgramaPage"
+import AvItems from "./pages/Programa/Avance/AvItemsPage"
+import DotListaContracts from "./pages/Programa/DotEquipo/DotListaContractsPage"
+import DotPrograma from "./pages/Programa/DotEquipo/DotProgramaPage"
+
+
+
+
 
 
 
@@ -99,6 +108,13 @@ function App() {
                     <Route path="/VisContracts/" element={<ProtectedRoute><VisContracts/></ProtectedRoute>} />    
                     <Route path="/VisListaDailys/:id" element={<ProtectedRoute><VisListaDailys /></ProtectedRoute>} />
                     <Route path="/VisVerDaily/:daily_id/:contract_id" element={<ProtectedRoute><VisVerDaily/></ProtectedRoute>} />
+                    <Route path="/AvListaContracts/" element={<ProtectedRoute><AvListaContracts/></ProtectedRoute>} />   
+                    <Route path="/AvPrograma/:contract_id" element={<ProtectedRoute><AvPrograma /></ProtectedRoute>} />
+                    <Route path="/AvItems/:contract_id" element={<ProtectedRoute><AvItems /></ProtectedRoute>} />
+                    <Route path="/DotListaContracts/" element={<ProtectedRoute><DotListaContracts/></ProtectedRoute>} />   
+                    <Route path="/DotPrograma/:contract_id" element={<ProtectedRoute><DotPrograma /></ProtectedRoute>} />
+
+ 
 
 
                     <Route path="*" element={<Navigate to="/login" />} />
