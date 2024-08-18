@@ -291,7 +291,7 @@ const Example = ({ dataColumns, contract_id, items, listaCargos }) => {
                     // );
                 }}
             >
-                Agregar Programa de Item
+                Agregar Programa de Cargo
             </Button>
         ),
         state: {
@@ -302,8 +302,10 @@ const Example = ({ dataColumns, contract_id, items, listaCargos }) => {
         },
     });
     return (
-        <Box sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'right', marginBottom: '1rem' }}>
+        <Box sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '0rem' }}>
+           <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <p style={{ fontSize: '1rem', fontWeight: 'bold', marginRight:'5px'}}>Nota: </p>
+                <p style={{ fontSize: '1rem' }}>  Recordar que el listado de cargos se modifica desde la estructura daily, por lo que debe solicitar al administrador para poder agregar o quitar alguno.</p>
             </Box>
             <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
                 <MaterialReactTable table={table} />

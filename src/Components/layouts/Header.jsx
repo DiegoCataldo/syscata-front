@@ -144,7 +144,7 @@ export default function Header() {
                             <Box
                                 component="img"
                                 sx={{
-                             
+
                                     height: 50,
                                     width: 150,
                                     maxHeight: { xs: 233, md: 167 },
@@ -153,30 +153,34 @@ export default function Header() {
                                 alt="The house from the offer."
                                 src={AGlogo}
                             />
-                           
+
                         </Typography>
 
                         <Box sx={{ flexGrow: 2, display: 'flex', justifyContent: 'center' }}>
-                                <Box
-                                    component="img"
-                                    sx={{
-                                        height: 60,
-                                        width: 120,
-                                        maxHeight: { xs: 233, md: 167 },
-                                        maxWidth: { xs: 350, md: 250 },
-                                    }}
-                                    alt="The house from the offer."
-                                    src={DTSlogo}
-                                />
-                            </Box>
+                            <Box
+                                component="img"
+                                sx={{
+                                    height: 60,
+                                    width: 120,
+                                    maxHeight: { xs: 233, md: 167 },
+                                    maxWidth: { xs: 350, md: 250 },
+                                }}
+                                alt="The house from the offer."
+                                src={DTSlogo}
+                            />
+                        </Box>
 
                         <Box sx={{ flexGrow: 1 }} />
-                        <Box sx={{ marginRight: '1rem'}}>
-                        <Box sx={{ fontSize: '1rem', color: 'white' }} >Contrato 1</Box>
-                        <Box sx={{ fontSize: '0.8rem', color: 'white' }}>Rol: EECC</Box>
+                        <Box sx={{ marginRight: '1rem' }}>
+                            {currentUser && (
+                                <Box sx={{ fontSize: '1rem', color: 'white' }}> Contrato: {currentUser.contract_den}</Box>
+                            )}
+                            {currentUser && (
+                                <Box sx={{ fontSize: '0.8rem', color: 'white' }}>Rol: {currentUser.role_name}</Box>
+                            )}
                         </Box>
                         <Box sx={{ flexGrow: 0 }}>
-                         
+
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <AccountCircleIcon sx={{ fontSize: '3rem', color: 'white' }} />
                             </IconButton>
@@ -196,7 +200,7 @@ export default function Header() {
                                 open={Boolean(anchorElUser)}
                                 onClose={handleCloseUserMenu}
                             >
-  
+
                                 {settings.map((setting) => (
                                     <MenuItem key={setting} onClick={() => handleUserMenuItemClick(setting)}>
                                         <Typography textAlign="center">{setting}</Typography>
@@ -224,36 +228,45 @@ export default function Header() {
                         </ListItem>
 
                         {/* COMIENZA lista de CONFIGURAR */}
-
-                        <ListItemButton onClick={handleClickConfigurar}>
-                            <ListItemIcon sx={{ color: 'white' }}>
-                                <ConstructionIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Configurar" />
-                            {openConfigurar ? <ExpandLess /> : <ExpandMore />}
-                        </ListItemButton>
-
-
-                        <Collapse in={openConfigurar} timeout="auto" unmountOnExit>
-                            <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
-                                <ListItem component={Link} to="/contracts" key="Gestionar contratos" sx={{ color: 'white' }}>
-                                    <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemIcon sx={{ color: 'white' }}>
-                                            <BadgeIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Gestionar contratos" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem component={Link} to="/users" button key="Gestionar usuarios" sx={{ color: 'white' }}>
-                                    <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemIcon sx={{ color: 'white' }}>
-                                            <GroupIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Gestionar usuarios" />
-                                    </ListItemButton>
-                                </ListItem>
-                            </List>
-                        </Collapse>
+                        {currentUser && currentUser.is_super_admin === 'Si' && (
+                            <ListItemButton onClick={handleClickConfigurar}>
+                                <ListItemIcon sx={{ color: 'white' }}>
+                                    <ConstructionIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Configurar" />
+                                {openConfigurar ? <ExpandLess /> : <ExpandMore />}
+                            </ListItemButton>
+                        )}
+                        {currentUser && currentUser.is_super_admin === 'Si' && (
+                            <Collapse in={openConfigurar} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
+                                    <ListItem component={Link} to="/contracts" key="Gestionar contratos" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <BadgeIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Gestionar contratos" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem component={Link} to="/users"  key="Gestionar usuarios" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <GroupIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Gestionar usuarios" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem component={Link} to="/ConfListaDailys"  key="Gestionar Dailys" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <GroupIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Gestionar Dailys" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                </List>
+                            </Collapse>
+                        )}
 
                         {/* TERMINA lista de CONFIGURAR */}
 
@@ -262,31 +275,39 @@ export default function Header() {
 
                         <ListItemButton onClick={handleClickDailys}>
                             <ListItemIcon sx={{ color: 'white' }}>
-                            <AssignmentIcon />
+                                <AssignmentIcon />
                             </ListItemIcon>
                             <ListItemText primary="Dailys" />
                             {openDailys ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
 
+
+
+
                         <Collapse in={openDailys} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
-                                <ListItem component={Link} to="/EECCContracts" key="Ingresar Dailys" sx={{ color: 'white' }}>
-                                    <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemIcon sx={{ color: 'white' }}>
-                                            <ContentPasteGoIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Ingresar Dailys" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem component={Link} to="/RevContracts" button key="Revisar Dailys" sx={{ color: 'white' }}>
-                                    <ListItemButton sx={{ pl: 4 }}>
-                                        <ListItemIcon sx={{ color: 'white' }}>
-                                            <ContentPasteSearchIcon />
-                                        </ListItemIcon>
-                                        <ListItemText primary="Revisar Dailys" />
-                                    </ListItemButton>
-                                </ListItem>
-                                <ListItem component={Link} to="/AproContracts" button key="Aprobar Dailys" sx={{ color: 'white' }}>
+                                {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 8) && (
+                                    <ListItem component={Link} to="/EECCDailys" key="Ingresar Dailys" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <ContentPasteGoIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Ingresar Dailys" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                )}
+                                {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 3 || currentUser.role_id === 4 || currentUser.role_id === 5 || currentUser.role_id === 6) && (
+                                    <ListItem component={Link} to="/RevListaDailys" button key="Revisar Dailys" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <ContentPasteSearchIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Revisar Dailys" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                )}
+                                 {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 10) && (
+                                <ListItem component={Link} to="/AproListaDailys" button key="Aprobar Dailys" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <AssignmentTurnedInIcon />
@@ -294,7 +315,9 @@ export default function Header() {
                                         <ListItemText primary="Aprobar Dailys" />
                                     </ListItemButton>
                                 </ListItem>
-                                <ListItem component={Link} to="/VisContracts" button key="Visualizar Dailys" sx={{ color: 'white' }}>
+                                )}
+                            
+                                <ListItem component={Link} to="/VisListaDailys" button key="Visualizar Dailys" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <FindInPageIcon />
@@ -302,15 +325,18 @@ export default function Header() {
                                         <ListItemText primary="Visualizar Dailys" />
                                     </ListItemButton>
                                 </ListItem>
+                              
+
                             </List>
                         </Collapse>
 
-                           {/* TERMINA lista de Dailys */}
+
+                        {/* TERMINA lista de Dailys */}
 
 
-                           
+
                         {/* COMIENZA lista de Programa */}
-
+                        {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 8) && (
                         <ListItemButton onClick={handleClickPrograma}>
                             <ListItemIcon sx={{ color: 'white' }}>
                                 <CalendarMonthIcon />
@@ -318,6 +344,8 @@ export default function Header() {
                             <ListItemText primary="Programa" />
                             {openPrograma ? <ExpandLess /> : <ExpandMore />}
                         </ListItemButton>
+                        )}
+                        {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 8) && (
                         <Collapse in={openPrograma} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
                                 <ListItem component={Link} to="/AvListaContracts" key="Avances" sx={{ color: 'white' }}>
@@ -328,7 +356,7 @@ export default function Header() {
                                         <ListItemText primary="Avances" />
                                     </ListItemButton>
                                 </ListItem>
-                                <ListItem component={Link} to="/DotListaContracts"  key="Dotación" sx={{ color: 'white' }}>
+                                <ListItem component={Link} to="/DotListaContracts" key="Dotación" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <GroupIcon />
@@ -336,9 +364,10 @@ export default function Header() {
                                         <ListItemText primary="Dotación" />
                                     </ListItemButton>
                                 </ListItem>
-                                
+
                             </List>
                         </Collapse>
+                        )}
 
                         {/* TERMINA lista de Programa */}
 

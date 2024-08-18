@@ -11,21 +11,23 @@ import TableComentarios from '../../Components/Containers/EECC/EECCCommentsTable
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { AuthContext } from '../../Components/context/authContext'
+import { set } from 'react-hook-form';
 
 
 
 
 // const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
 
-const IngresarDaily = ({ onSubmit, users, companies }) => {
+const IngresarDaily = ({ }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
   const [dailyInfo, setDailyInfo] = useState({});
   const { accessToken, currentUser } = useContext(AuthContext);
+  const [items, setItems] = useState([]);
 
-
-  const { id, contract_id } = useParams()
+  const contract_id = currentUser.contract_id;
+  const { id } = useParams()
 
   const totalSteps = () => {
     return steps.length;
@@ -82,6 +84,8 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
         });
         items.sort((a, b) => a.item.localeCompare(b.item));
         
+        setItems(items);
+
         updatedStepsOrdenados.forEach((step) => {
           if (step.sheet === "Avances") {
             step.fields.forEach((field) => {
@@ -152,7 +156,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
     } else if (steps[step].idSheet === 'comentarios') {
       return <TableComentarios data={steps} idDaily={id} contract_id={contract_id} currentUser={currentUser} />;
     } else {
-      return <TableEECC data={steps[step]} idDaily={id} contract_id={contract_id} />;
+      return <TableEECC data={steps[step]} idDaily={id} contract_id={contract_id}  items = {items}/>;
     }
 
   };

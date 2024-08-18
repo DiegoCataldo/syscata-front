@@ -28,14 +28,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
+import { subcategoriasInt } from './subcategoriasInt';
+import { set } from 'react-hook-form';
 
-const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
+const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [availableDailys, setAvailableDailys] = useState([]);
   const [selectedDaily, setSelectedDaily] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10000);
+  const [subCategorias, setSubCategorias] = useState([]);
+
 
 
 
@@ -54,6 +58,13 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
 
   const [sorting, setSorting] = useState([]);
 
+  const {
+    data: fetchedData = [],
+    isError: isLoadingUsersError,
+    isFetching: isFetchingUsers,
+    isLoading: isLoadingUsers,
+  } = useGetRows(idDaily, idSheet);
+
   const columns = useMemo(() => {
 
     const safeFields = fields || [];
@@ -66,6 +77,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
           // necesitamos un accessorKey único para cada columna
           accessorKey: newfieldname,
           header: field.name,
+
           ...(field.name === 'Comentarios EECC' && { size: 300 }),
           ...(field.name === 'Comentarios Codelco' && { enableEditing: false, size: 300 }),
           muiTableHeadCellProps: {
@@ -77,7 +89,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
           muiTableFooterCellProps: {
             align: 'center',
           },
-          ...(field.name === 'HH Trabajadas' && { Footer: () => <div>Total: {HHtrabajadasTable} </div> }),
+          ...(field.name === 'HH Trabajadas' && fetchedData?.sheetname === 'Personal' && { Footer: () => <div>Total: {HHtrabajadasTable} </div> }),
           ...(field.name === 'Horas Operativas' && { Footer: () => <div>Total: {HMoperativasTable} </div> }),
           ...(field.name === 'Horas No Operativas' && { Footer: () => <div>Total: {HMnoOperativasTable} </div> }),
           ...(field.name === 'Horas Mantención Programada' && { Footer: () => <div>Total: {HMmantencion} </div> }),
@@ -88,7 +100,8 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
 
 
           muiEditTextFieldProps: ({ cell, row, table }) => ({
-            ...(field.name === 'HH Trabajadas' && {
+
+            ...(field.name === 'HH Trabajadas' && fetchedData?.sheetname === 'Personal' && {
               value: rowValuesTemp[newfieldname] || '',
               onChange: (e) => handleHH(e, field, row, table),
 
@@ -98,21 +111,50 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
             error: !!safeValidationErrors[newfieldname],
             helperText: safeValidationErrors[newfieldname],
 
-            ...(field.name === 'Estado Personal' && { onChange: (e) => handleEstado(e, field, row, table) }),
-            ...(field.name === 'Jornada' && { onChange: (e) => handleJornada(e, field, row, table) }),
-            ...(field.name === 'Categoría' && { onChange: (e) => handleCategoria(e, field, row, table) }),
+            ...(field.name === 'Item' &&  fetchedData?.sheetname === 'Avances' && { onChange: (e) => handleItem(e, field, row, table),
+
+          }),
+          ...((field.name === 'Descripción item' || field.name === 'Unidad') && fetchedData?.sheetname === 'Avances' && {
+            value: rowValuesTemp[field.name] || '',
+          }),
+
+
+
+         
+
+            ...(field.name === 'Estado Personal' && fetchedData?.sheetname === 'Personal' && { onChange: (e) => handleEstado(e, field, row, table) }),
+            ...(field.name === 'Jornada' && fetchedData?.sheetname === 'Personal' && { onChange: (e) => handleJornada(e, field, row, table) }),
+            ...(field.name === 'Categoría' && fetchedData?.sheetname === 'Personal' && { onChange: (e) => handleCategoria(e, field, row, table) }),
+            ...(field.name === 'Categoría' && fetchedData?.sheetname === 'Interferencias' && { onChange: (e) => handleCategoriaInt(e, field, row, table) }),
+            
             ...(field.field_type === 'integer' && { type: 'number' }),
             ...(field.field_type === 'date' && { type: 'date' }),
             ...(field.field_type === 'hour' && { type: 'time' }),
           }),
+          
+          //si es lista se agrega el editVariant y las opciones del select
           ...(field.field_type === 'list' && {
             editVariant: 'select',
-            editSelectOptions: field.dropdown_lists,
+            // Si es subcategoria y es de la hoja de interferencias se le asigna el valor de subcategorias
+            ...(field.name === 'SubCategoría' && fetchedData?.sheetname === 'Interferencias' ? {
+              editSelectOptions: subCategorias,
+            } : 
+            // Si es descripción item o unidad y es de la hoja de interferencias, se le asigna el valor de rowValuesTemp
+            ((field.name === 'Descripción item' || field.name === 'Unidad') && fetchedData?.sheetname === 'Avances' ? {
+              editSelectOptions: [rowValuesTemp[field.name]],
+             
+            } : 
+            // En cualquier otro caso, se le asigna field.dropdown_lists
+            {
+              editSelectOptions: field.dropdown_lists,
+            })),
           }),
 
         };
       });
-  }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable, HMoperativasTable, HMnoOperativasTable, HMmantencion, HMenPanne, HHTotalesInt, PersInv, HMTotalesInt]);
+  }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable, HMoperativasTable, HMnoOperativasTable, HMmantencion, HMenPanne, HHTotalesInt, PersInv, HMTotalesInt, subCategorias, fetchedData]);
+
+  console.log('columns:', columns);
 
   const handleOpenModal = async () => {
     await fetchDailys();
@@ -126,7 +168,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const fetchDailys = async () => {
     try {
       const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
-      setAvailableDailys(response.data.data);
+      setAvailableDailys(response.data);
     } catch (error) {
       console.error('Error al obtener los Dailys:', error);
     }
@@ -138,6 +180,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
       const copyResponse = await axios.post(`${BASE_URL}/copyValuesRow`, {
         selectedDaily: selectedDaily,
         idDaily: idDaily,
+        idSheet: idSheet,
       });
       queryClient.invalidateQueries(['fields']);
       setIsModalOpen(false);
@@ -146,7 +189,31 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     }
   };
 
+//funcion para manejar el cambio en item (hoja avances)
+  const handleItem = (event, field, row, table) => {
+    const newValue = event.target.value;
+    console.log('newValue:', newValue);
+    // Actualiza el estado de item en la fila actual
+    setRowValuesTemp(prevValues => ({
+        ...prevValues,
+        [field.name]: newValue,
+    }));
 
+    const item = items.find((item) => item.item === newValue);
+    console.log(item);
+    const description = item.description
+    const unidad = item.unidad
+
+    // Actualiza el estado de description y unidad en la fila actual
+    setRowValuesTemp(prevValues => ({
+        ...prevValues,
+       "Descripción item": description,
+        Unidad: unidad,
+    }));
+
+    console.log('rowValuesTemp:', rowValuesTemp);
+
+};
 
   // Función para manejar el cambio en "HH trabajadas"
   const handleHH = (event, field, row, table) => {
@@ -239,16 +306,23 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
       [`${field.name}-${idSheet}`]: newValue,
     }));
   };
+
+
+  const handleCategoriaInt = (event, field, row, table) => {
+    const categoria = event.target.value;
+    const subcategorias = subcategoriasInt.find((cat) => cat.categoria === categoria);
+    console.log('subcategorias:', subcategorias.subcategorias);
+    setSubCategorias(subcategorias.subcategorias);
+   
+  };
+
+
+
   const resetRowValues = () => {
     setRowValuesTemp({});
   }
 
-  const {
-    data: fetchedData = [],
-    isError: isLoadingUsersError,
-    isFetching: isFetchingUsers,
-    isLoading: isLoadingUsers,
-  } = useGetRows(idDaily, idSheet);
+
 
   // Hooks y manejadores de Crear, Actualizar, Eliminar
   const { mutateAsync: createField, isPending: isCreatingField } = useCreateField();
@@ -606,11 +680,15 @@ function useGetRows(idDaily, idSheet) {
       console.log('rowsResponse:', rowsResponse);
       console.log('fields:', fields);
 
+      const sheetname = steps.find(step => step.idSheet === idSheet).sheet;
+
+
 
 
       return {
         fields: fields,
-        rows: rowsResponse
+        rows: rowsResponse,
+        sheetname: sheetname,
       };
 
     },
@@ -692,9 +770,13 @@ function useDeleteField() {
 
 const queryClient = new QueryClient();
 
-const Table = ({ data, idDaily, contract_id }) => {
+const Table = ({ data, idDaily, contract_id, items }) => {
   if (!data) return null;
   let fields = data.fields.sort((a, b) => a.step - b.step);
+
+  //busco los items para la hoja de avances
+
+
 
 
   const idSheet = data.idSheet;
@@ -704,7 +786,7 @@ const Table = ({ data, idDaily, contract_id }) => {
   }
   return (
     <QueryClientProvider client={queryClient}>
-      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} />
+      <TableP fields={fields} idSheet={idSheet} idDaily={idDaily} contract_id={contract_id} items ={items} />
     </QueryClientProvider>
   );
 };

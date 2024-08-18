@@ -165,6 +165,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
     const idValue = row.original['id'];
     const id_user_comments = row.original['user_id'];
     const current_user_id = currentUser.id;
+    const role_id = currentUser.role_id;
 
     //si el usuario no es el mismo que creo el comentario no puede editarlo
     if (id_user_comments !== current_user_id) {
@@ -197,7 +198,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
     transformedValues['comentario_codelco'] = values['comentario_codelco'];
     transformedValues['comentario_eecc'] = values['respuesta_eecc'];
     transformedValues['revision'] = values['revision'];
-    transformedValues['role_id'] = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    transformedValues['role_id'] = role_id; 
     transformedValues['id'] = idValue;
     const transformedValuesObj = Object.assign({}, transformedValues);
 
@@ -238,7 +239,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
 
 
   const aprobarDaily = async () => {
-    const role_id = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    const role_id = currentUser.role_id;
     const respuesta = 'Aprobado';
     const user_id = currentUser.id;
     const revision = fetchedData.daily_info.revision;
@@ -248,7 +249,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
   }
 
   const rechazarDaily = async () => {
-    const role_id = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    const role_id = currentUser.role_id;
     const respuesta = 'Rechazado';
     const user_id = currentUser.id;
     const revision = fetchedData.daily_info.revision;
@@ -259,7 +260,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
   }
 
   const finalizarDaily = async () => {
-    const role_id = 10; //esto quizas cambiarlo luego a que lo traiga desde current_user
+    const role_id = currentUser.role_id;
     const respuesta = 'Finalizado';
     const user_id = currentUser.id;
     const revision = fetchedData.daily_info.revision;

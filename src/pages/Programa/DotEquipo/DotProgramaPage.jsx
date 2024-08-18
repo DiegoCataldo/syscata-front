@@ -74,11 +74,11 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
     }
 
     if (steps[step].sheet === 'Dotación') {
-      return <TableDotacion  contract_id={contract_id} datacolumns={columns} listaCargos={cargos} items={items} />;
+      return <TableDotacion  contract_id={contract_id} datacolumns={columns} listaCargos={cargos}  />;
     } if (steps[step].sheet === 'Maquinarias') {
-      return <TableMaq  contract_id={contract_id} datacolumns={columns} listaMaq ={maq} items={items} />;
+      return <TableMaq  contract_id={contract_id} datacolumns={columns} listaMaq ={maq}  />;
     } else if (steps[step].sheet === 'Cargo-Maquinaria') {
-      return <TableCargoMaq  contract_id={contract_id} datacolumns={columns} items={items} />; 
+      return <TableCargoMaq  contract_id={contract_id}  listaMaq ={maq} listaCargos={cargos} />; 
     }
 
   };
@@ -192,7 +192,7 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
               <Grid
                 item
                 xs={12}
-                sx={{ padding: '20px' }}
+                sx={{ padding: '10px' }}
               >
                 {formContent(activeStep)}
               </Grid>

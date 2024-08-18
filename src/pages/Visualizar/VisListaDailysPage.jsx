@@ -1,10 +1,12 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState , useContext}  from 'react';
 import DailysTable from '../../Components/Containers/Visualizar/VisListaDailysTable';
 import { Box, Button } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../Components/context/authContext'
+
 
 const ContractsPage = () => {
 
@@ -12,7 +14,10 @@ const ContractsPage = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
-    const { id } = useParams(); //idContract
+    const {currentUser } = useContext(AuthContext);
+
+    const  contract_id = currentUser.contract_id;
+
 
     useEffect(() => {
         fetchDailys(page + 1, rowsPerPage);
@@ -20,11 +25,11 @@ const ContractsPage = () => {
     
     const fetchDailys = async (page, rowsPerPage) => {
         try {
-            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${id}&page=${page}&per_page=${rowsPerPage}`);
-            const dailys = response.data.data;
+            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
+            const dailys = response.data;
 
             setDailys(dailys);
-            setTotalCount(response.data.total);
+            setTotalCount(response.total);
         } catch (error) {
             console.error('Error al obtener los Dailys:', error);
         }

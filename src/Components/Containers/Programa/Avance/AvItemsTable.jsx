@@ -42,6 +42,15 @@ const dataPrev = [
 const unidades = [
     'm3',
     'm2',
+    'cu',
+    'kg',
+    'lt',
+    'm',
+    'ton',
+    'ml',
+    'otro'
+
+
 ]
 
 const Example = ({ contract_id }) => {

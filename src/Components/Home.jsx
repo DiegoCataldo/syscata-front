@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from './context/authContext'
+
 
 export default function Home() {
+    const { accessToken, currentUser } = useContext(AuthContext);
+    console.log(currentUser)
   return (
     <div className='container'>
         <div className="row my-5">

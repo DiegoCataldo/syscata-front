@@ -25,7 +25,8 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
 
 
 
-  const { id, contract_id } = useParams()
+  const { id } = useParams()
+  const contract_id = currentUser.contract_id;
 
   const totalSteps = () => {
     return steps.length;

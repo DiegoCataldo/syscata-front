@@ -9,6 +9,7 @@ import { AuthContext } from "./Components/context/authContext"
 import { useEffect, useState } from "react"
 import Login from "./Components/auth/Login"
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute"
+import ProtectedRouteSRContracts from "./Components/ProtectedRoute/ProtectedRouteSRContracts"
 import ContractFormPage from "./pages/Configurar/ContractCUPage"
 import ContractsPage from "./pages/Configurar/ContractsPage"
 import UserPage from "./pages/Configurar/UsersPage"
@@ -36,13 +37,10 @@ import AvPrograma from "./pages/Programa/Avance/AvProgramaPage"
 import AvItems from "./pages/Programa/Avance/AvItemsPage"
 import DotListaContracts from "./pages/Programa/DotEquipo/DotListaContractsPage"
 import DotPrograma from "./pages/Programa/DotEquipo/DotProgramaPage"
-
-
-
-
-
-
-
+import SRContracts from "./pages/SelectRol/SRContractsPage"
+import SRRole from "./pages/SelectRol/SRRolePage"
+import ConfListaDailys from "./pages/Configurar/Daily/ConfListaDailysPage"
+import ConfEditDaily from "./pages/Configurar/Daily/ConfEditDailyPage"
 
 
 
@@ -60,8 +58,19 @@ function App() {
     useEffect(() => {
         const fetchCurrentlyLoggedInUser = async () => {
             try {
+                const savedUser = localStorage.getItem('currentUser');
+
+
                 const response = await axios.get(`${BASE_URL}/user`, getConfig(accessToken))
-                setCurrentUser(response.data.user)
+                let user = response.data.user;
+                //esto es para que no se pierda el contrato y el rol al recargar la pagina
+                if (savedUser) {
+                    user.contract_id = JSON.parse(savedUser).contract_id;
+                    user.contract_den = JSON.parse(savedUser).contract_den;
+                    user.role_id = JSON.parse(savedUser).role_id;
+                    user.role_name = JSON.parse(savedUser).role_name;
+                }
+                setCurrentUser(user)
                 localStorage.setItem('currentUser', JSON.stringify(response.data.user))
             } catch (error) {
                 if (error?.response?.status === 401) {
@@ -84,35 +93,39 @@ function App() {
                     <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
-                    <Route path="/contracts" element={<ProtectedRoute><ContractsPage /></ProtectedRoute>} />
-                    <Route path="/contracts/create" element={<ProtectedRoute><ContractFormPage /></ProtectedRoute>} />
-                    <Route path="/contracts/formato/:id" element={<ProtectedRoute><ContractFormato /></ProtectedRoute>} />
-                    <Route path="/contracts/edit/:id" element={<ProtectedRoute><ContractFormPage /></ProtectedRoute>} />
-                    <Route path="/users/create" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
-                    <Route path="/users/edit/:id" element={<ProtectedRoute><UserFormPage /></ProtectedRoute>} />
-                    <Route path="/users" element={<ProtectedRoute><UserPage /></ProtectedRoute>} />
-                    <Route path="/EECCDailys/:id" element={<ProtectedRoute><EECCDailys /></ProtectedRoute>} />
-                    <Route path="/EECCDailys/edit/:id/:contract_id" element={<ProtectedRoute><EECCIngresarDaily /></ProtectedRoute>} />  
+                    <Route path="/contracts" element={<ProtectedRouteSRContracts><ContractsPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/contracts/create" element={<ProtectedRouteSRContracts><ContractFormPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/contracts/formato/:id" element={<ProtectedRouteSRContracts><ContractFormato /></ProtectedRouteSRContracts>} />
+                    <Route path="/contracts/edit/:id" element={<ProtectedRouteSRContracts><ContractFormPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/users/create" element={<ProtectedRouteSRContracts><UserFormPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/users/edit/:id" element={<ProtectedRouteSRContracts><UserFormPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/users" element={<ProtectedRouteSRContracts><UserPage /></ProtectedRouteSRContracts>} />
+                    <Route path="/EECCDailys/" element={<ProtectedRoute><EECCDailys /></ProtectedRoute>} />
+                    <Route path="/EECCDailys/edit/:id/" element={<ProtectedRoute><EECCIngresarDaily /></ProtectedRoute>} />  
                     <Route path="/EECCContracts/" element={<ProtectedRoute><EECCContracts/></ProtectedRoute>} />    
                     <Route path="/EECCdailyEnviado/:daily_id/:contract_id/:state_id" element={<ProtectedRoute><EECCdailyEnviado/></ProtectedRoute>} />    
                     <Route path="/EECCverDaily/:daily_id/:contract_id" element={<ProtectedRoute><EECCverDaily/></ProtectedRoute>} />
                     <Route path="/RevContracts/" element={<ProtectedRoute><RevContracts/></ProtectedRoute>} />
                     <Route path="/RevRolesSelect/:contract_id" element={<ProtectedRoute><RevRolesSelect/></ProtectedRoute>} />
-                    <Route path="/RevListaDailys/:id_rol/:contract_id" element={<ProtectedRoute><RevListaDailys/></ProtectedRoute>} />
+                    <Route path="/RevListaDailys/" element={<ProtectedRoute><RevListaDailys/></ProtectedRoute>} />
                     <Route path="/RevRevisarDaily/:id/:contract_id/:role_id" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
                     <Route path="/RevDailyRevisado/:daily_id/:contract_id/:state_id/:nombre_area" element={<ProtectedRoute><RevDailyRevisado/></ProtectedRoute>} />    
                     <Route path="/AproContracts/" element={<ProtectedRoute><AproContracts/></ProtectedRoute>} />
-                    <Route path="/AproListaDailys/:contract_id" element={<ProtectedRoute><AproListaDailys/></ProtectedRoute>} />
+                    <Route path="/AproListaDailys/" element={<ProtectedRoute><AproListaDailys/></ProtectedRoute>} />
                     <Route path="/AproAprobarDaily/:id/:contract_id" element={<ProtectedRoute><AproAprobarDaily/></ProtectedRoute>} />
                     <Route path="/AproDailyAproRech/:daily_id/:contract_id/:respuesta/" element={<ProtectedRoute><AproDailyAproRech/></ProtectedRoute>} />    
                     <Route path="/VisContracts/" element={<ProtectedRoute><VisContracts/></ProtectedRoute>} />    
-                    <Route path="/VisListaDailys/:id" element={<ProtectedRoute><VisListaDailys /></ProtectedRoute>} />
+                    <Route path="/VisListaDailys/" element={<ProtectedRoute><VisListaDailys /></ProtectedRoute>} />
                     <Route path="/VisVerDaily/:daily_id/:contract_id" element={<ProtectedRoute><VisVerDaily/></ProtectedRoute>} />
                     <Route path="/AvListaContracts/" element={<ProtectedRoute><AvListaContracts/></ProtectedRoute>} />   
                     <Route path="/AvPrograma/:contract_id" element={<ProtectedRoute><AvPrograma /></ProtectedRoute>} />
                     <Route path="/AvItems/:contract_id" element={<ProtectedRoute><AvItems /></ProtectedRoute>} />
                     <Route path="/DotListaContracts/" element={<ProtectedRoute><DotListaContracts/></ProtectedRoute>} />   
                     <Route path="/DotPrograma/:contract_id" element={<ProtectedRoute><DotPrograma /></ProtectedRoute>} />
+                    <Route path="/SRContracts/" element={<ProtectedRouteSRContracts><SRContracts /></ProtectedRouteSRContracts>} />
+                    <Route path="/SRRole/:contract_id" element={<ProtectedRouteSRContracts><SRRole /></ProtectedRouteSRContracts>} />
+                    <Route path="/ConfListaDailys/" element={<ProtectedRoute><ConfListaDailys /></ProtectedRoute>} />
+                    <Route path="/ConfEditDaily/:daily_id" element={<ProtectedRoute><ConfEditDaily /></ProtectedRoute>} />
 
  
 

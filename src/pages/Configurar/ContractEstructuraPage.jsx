@@ -55,11 +55,12 @@ const ContractFormato = ({ onSubmit, users, companies }) => {
           //obtener items
           const responseItem = await axios.get(`${BASE_URL}/getItems/${id}`);
           let items = responseItem.data;
+
           //asigno el nombre de items.item a el campo item.value
           items.forEach((item, index) => {
             items[index].value = item.item;
-            });
-            
+            });  
+            //modifico los dropdowns de la hoja de avances ya que los dropdowns de items deberian venir de la tabla items.
             stepsDeepCopy.forEach((step) => {
               if (step.sheet === "Avances") {
                 step.fields.forEach((field) => {
@@ -71,9 +72,10 @@ const ContractFormato = ({ onSubmit, users, companies }) => {
             });
             
    
-
+            console.log('stepsDeepCopy:', stepsDeepCopy);
 
           setObjetoInicial(stepsDeepCopy);
+
           console.log('stepsDeepCopy:', stepsDeepCopy);
         }
       } catch (error) {

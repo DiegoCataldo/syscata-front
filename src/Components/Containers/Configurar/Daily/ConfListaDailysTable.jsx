@@ -29,7 +29,7 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
     const handleEdit = (row) => {
         console.log(row);
         const daily_id = row.original.id;
-        navigate(`/EECCDailys/edit/${daily_id}`);
+        navigate(`/ConfEditDaily/${daily_id}`);
         /*
         if (state_id === 1) { // si el estado es a la espera contratista
             navigate(`/EECCDailys/edit/${id}/${contract_id}`);

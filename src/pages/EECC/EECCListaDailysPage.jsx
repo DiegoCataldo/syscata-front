@@ -1,17 +1,19 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState , useContext}  from 'react';
 import DailysTable from '../../Components/Containers/EECC/EECCDailysTable';
 import { Box, Button } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../Components/context/authContext'
 
 const ContractsPage = () => {
+    const {currentUser } = useContext(AuthContext);
     const [dailys, setDailys] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
-    const { id } = useParams(); //idContract
+    const  contract_id = currentUser.contract_id;
 
 
     useEffect(() => {
@@ -21,8 +23,8 @@ const ContractsPage = () => {
 
     const fetchDailys = async (page, rowsPerPage) => {
         try {
-            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${id}&page=${page}&per_page=${rowsPerPage}`);
-            const dailys = response.data.data;
+            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
+            const dailys = response.data;
             const filteredDailys = dailys.filter(daily => daily.state_id === 1);
 
             setDailys(filteredDailys);

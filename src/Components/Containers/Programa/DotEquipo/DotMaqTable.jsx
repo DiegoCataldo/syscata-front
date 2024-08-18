@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
     MaterialReactTable,
     // createRow,
@@ -20,30 +20,19 @@ import { BASE_URL } from '../../../../helpers/config';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { set } from 'react-hook-form';
 
 
-const dataPrev = [
-    {
-        id: '9s41rp',
-        firstName: 'Kelvin',
-        lastName: 'Langosh',
-        email: 'Jerod14@hotmail.com',
-        state: 'Ohio',
-    },
-    {
-        id: '08m6rx',
-        firstName: 'Molly',
-        lastName: 'Purdy',
-        email: 'Hugh.Dach79@hotmail.com',
-        state: 'Rhode Island',
-    },
-]
-
-const Example = ({ dataColumns, contract_id, items }) => {
+const Example = ({ dataColumns, contract_id, items, listaMaq }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const navigate = useNavigate();
+    //este es el dropdown que se muestra al momento de crear o editar una row, este se modfica segun esta editando o creando una row (ver useEffect)
+    const [itemsDropdown, setItemsDropdown] = useState([]);
+    //y este es el dropdown original que siempre va a mostrar las categorias que no esten en la base de datos ya creadas
+    const [itemsDropdownBD, setItemsDropdownBD] = useState([]);
 
-    const itemsDropdown = items.map((item) => item.item);
+    const [editSelectOptions, setEditSelectOptions] = useState('defaultOption');
+
 
     const columns = useMemo(() => {
 
@@ -52,9 +41,18 @@ const Example = ({ dataColumns, contract_id, items }) => {
         return safeFields
             .map((field) => {
                 return {
-                    // necesitamos un accessorKey único para cada columna
+                    // si es categoria le cambio a cargo y le pongo un dropdown
+                    ...(field.name === 'categoria' && {
+                        editVariant: 'select',
+                        editSelectOptions: itemsDropdown,
+                        header: 'Maquinaria',
+                    }),
+                    ...(field.name !== 'categoria' && {
+                        header: field.name,
+                    }),
+
                     accessorKey: field.name,
-                    header: field.name,
+
 
                     muiTableHeadCellProps: {
                         align: 'left',
@@ -65,31 +63,28 @@ const Example = ({ dataColumns, contract_id, items }) => {
                     muiTableFooterCellProps: {
                         align: 'center',
                     },
-                   
-
                     muiEditTextFieldProps: ({ cell, row, table }) => ({
                         id: field.name,
                         required: true,
                         error: !!safeValidationErrors[field.name],
                         helperText: safeValidationErrors[field.name],
-                        ...(field.name !== 'item' && {  type: 'number',
+                        ...(field.name !== 'categoria' && {
+                            type: 'number',
                             inputProps: {
-                              step: '0.01',
-                              pattern: "[0-9]*\\.?[0-9]+",
-                              onKeyPress: (event) => {
-                                if (event.key === ',' || event.key === '-' || event.key === '+' || event.key === 'e') {
-                                  event.preventDefault();
-                                }
-                              },
-                            },}),
+                                step: '0.01',
+                                pattern: "[0-9]*\\.?[0-9]+",
+                                onKeyPress: (event) => {
+                                    if (event.key === ',' || event.key === '-' || event.key === '+' || event.key === 'e') {
+                                        event.preventDefault();
+                                    }
+                                },
+                            },
+                        }),
                     }),
 
-                    ...(field.name === 'item' && {
-                        editVariant: 'select',
-                        editSelectOptions: itemsDropdown,
-                      }),
-                    
-                    
+
+
+
 
                 };
             });
@@ -112,6 +107,18 @@ const Example = ({ dataColumns, contract_id, items }) => {
     const { mutateAsync: deleteRow, isPending: isDeletingUser } =
         useDeleteRow();
 
+    useEffect(() => {
+        //esto es para que al momento de crear una row  el usuario solo pueda seleccionar la opcion de la categoria que no este creada aun en la base de datos
+        //y al editar solo podra seleccionar la opcion del cargo editado
+        const itemsDropdown = listaMaq?.map((item) => item.value) || [];
+        const fetchedCategories = fetchedRows?.rows?.map((row) => row.categoria) || [];
+        const filteredItemsDropdown = itemsDropdown.filter((item) => !fetchedCategories.includes(item));
+
+        setItemsDropdown(filteredItemsDropdown);
+        setItemsDropdownBD(filteredItemsDropdown);
+    }, [contract_id, listaMaq]);
+
+
     //CREATE action
     const handleCreateRow = async ({ values, table }) => {
         const newValidationErrors = validateRow(values);
@@ -120,22 +127,21 @@ const Example = ({ dataColumns, contract_id, items }) => {
             return;
         }
         setValidationErrors({});
-   //por cada columna que no es "item" se crea un nuevo objeto con los valores de la fila, esto ya que en la bd cada date es un registro
+        //por cada columna que no es "item" se crea un nuevo objeto con los valores de la fila, esto ya que en la bd cada date es un registro
         const newData = Object.entries(values).reduce((acc, [key, value]) => {
-            if (key !== 'item'  ) {
-                const item = items.find((item) => item.item === values.item);
-                const itemId = item ? item.id : null;
+            const name_sheet = 'Maquinarias';
+            if (key !== 'categoria') {
                 acc.push({
                     contract_id: contract_id,
-                    item_id: itemId,
-                    item: values.item,
+                    name_sheet: name_sheet,
+                    categoria: values.categoria,
                     value: value,
                     date: key,
                 });
             }
             return acc;
         }, []);
-     
+
         console.log('newData:', newData);
         await createRow(newData);
         toast.success('Programa de Item creado exitosamente');
@@ -144,7 +150,7 @@ const Example = ({ dataColumns, contract_id, items }) => {
 
     //UPDATE action
     const handleSaveRow = async ({ values, table, row }) => {
-
+        console.log('values:', values);
         const newValidationErrors = validateRow(values);
         if (Object.values(newValidationErrors).some((error) => error)) {
             setValidationErrors(newValidationErrors);
@@ -154,22 +160,21 @@ const Example = ({ dataColumns, contract_id, items }) => {
 
         //por cada columna que no es "item" se crea un nuevo objeto con los valores de la fila, esto ya que en la bd cada date es un registro
         const newData = Object.entries(values).reduce((acc, [key, value]) => {
-            if (key !== 'item'  ) {
-                //busco la data de del item
-                const item = items.find((item) => item.item === values.item);
-                //si existe el item, obtengo el id
-                const itemId = item ? item.id : null;
-
+            const name_sheet = 'Maquinarias';
+            const categoria = values.categoria;
+            console.log('categoria:', categoria);
+            console.log('key:', key);
+            if (key !== 'categoria') {
                 //busco el id del valuePrograma (el objeto que estoy creando o editando)
                 const valuePrograma = fetchedRows.valuesPrograma.find(
-                    (valuePrograma) => valuePrograma.item_id === itemId && valuePrograma.date === key,
+                    (valuePrograma) => valuePrograma.categoria === categoria && valuePrograma.date === key,
                 );
 
                 acc.push({
                     contract_id: contract_id,
                     id: valuePrograma.id,
-                    item_id: itemId,
-                    item: values.item,
+                    name_sheet: name_sheet,
+                    categoria: values.cargo,
                     value: value,
                     date: key,
                 });
@@ -184,36 +189,34 @@ const Example = ({ dataColumns, contract_id, items }) => {
     };
 
     //DELETE action
-    const openDeleteConfirmModal = ( row) => {
+    const openDeleteConfirmModal = (row) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
 
             const values = row.original;
             console.log('values:', values);
-            console.log('items:', items);
+            const categoria = values.categoria;
+            const name_sheet = 'Maquinarias';
 
+            //lo que busco aqui es crear nuevamente todos los registros de la base de dato para luego poder enviarlos al backend y eliminarlos
             const newData = Object.entries(values).reduce((acc, [key, value]) => {
-                if (key !== 'item' && key !== 'id' && key !== 'contract_id' && key !== 'item_id' && key !== 'item' && key !== 'created_at' && key !== 'updated_at') {
-                    //busco la data de del item
-                    const item = items.find((item) => item.item === values.item);
-                    //si existe el item, obtengo el id
-                    console.log('item:', item);
-                    const itemId = item ? item.id : null;
-                    console.log('itemId:', itemId);
-                    
+                if (key !== 'categoria' && key !== 'id' && key !== 'contract_id' && key !== 'name_sheet' && key !== 'created_at' && key !== 'updated_at') {
+                    //busco la data de de la categoria
+
                     console.log('fetchedRows:', fetchedRows);
                     console.log('key:', key);
+
                     //busco el id del valuePrograma (el objeto que estoy creando o editando)
                     const valuePrograma = fetchedRows.valuesPrograma.find(
-                        (valuePrograma) => valuePrograma.item_id === itemId && valuePrograma.date === key,
+                        (valuePrograma) => valuePrograma.categoria === categoria && valuePrograma.date === key,
                     );
 
                     console.log('valuePrograma:', valuePrograma);
-    
+
                     acc.push({
                         contract_id: contract_id,
                         id: valuePrograma.id,
-                        item_id: itemId,
-                        item: values.item,
+                        categoria: categoria,
+                        name_sheet: name_sheet,
                         value: value,
                         date: key,
                     });
@@ -223,7 +226,7 @@ const Example = ({ dataColumns, contract_id, items }) => {
 
 
 
-            deleteRow({ data: newData});
+            deleteRow({ data: newData });
         }
     };
 
@@ -252,7 +255,14 @@ const Example = ({ dataColumns, contract_id, items }) => {
         renderRowActions: ({ row, table }) => (
             <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Tooltip title="Edit">
-                    <IconButton onClick={() => table.setEditingRow(row)}>
+                    <IconButton onClick={() => {
+                        //quito cualquier fila que se pueda estar creando o editando
+                        table.setEditingRow(null);
+                        table.setCreatingRow(null);
+                        //se setea el dropdown solo del item seleccionado para que no pueda editar la categoria
+                        setItemsDropdown([row.original.categoria]);
+                        table.setEditingRow(row);
+                    }}>
                         <EditIcon />
                     </IconButton>
                 </Tooltip>
@@ -267,6 +277,11 @@ const Example = ({ dataColumns, contract_id, items }) => {
             <Button
                 variant="contained"
                 onClick={() => {
+                    //quito cualquier fila que se pueda estar creando o editando
+                    table.setEditingRow(null);
+                    table.setCreatingRow(null);
+                    //seteo de nuevo a los items dropdown originales
+                    setItemsDropdown(itemsDropdownBD);
                     table.setCreatingRow(true); //simplest way to open the create row modal with no default values
                     //or you can pass in a row object to set default values with the `createRow` helper function
                     // table.setCreatingRow(
@@ -276,7 +291,7 @@ const Example = ({ dataColumns, contract_id, items }) => {
                     // );
                 }}
             >
-                Agregar Programa de Item
+                Agregar Programa de Maquinaria
             </Button>
         ),
         state: {
@@ -288,22 +303,9 @@ const Example = ({ dataColumns, contract_id, items }) => {
     });
     return (
         <Box sx={{ width: '100%', margin: '0 auto', justifyContent: 'center', alignItems: 'center', paddingBottom: '2rem' }}>
-                 
-            <Box sx={{ display: 'flex', justifyContent: 'right', marginBottom: '1rem' }}>
-
-
-                <Tooltip title="Aprobar Daily Report" sx={{ mb: '2rem' }}>
-                    <Button
-                        id="aprobarButton"
-                        startIcon={<ArrowForwardIcon/>}
-                        style={{ backgroundColor: '#5B5B5B' }}
-                        variant="contained"
-                        onClick={() => {
-                            navigate(`/AvItems/${contract_id}`);
-                        }}>
-                        Modificar Items
-                    </Button>
-                </Tooltip>
+           <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <p style={{ fontSize: '1rem', fontWeight: 'bold', marginRight:'5px'}}>Nota: </p>
+                <p style={{ fontSize: '1rem' }}>  Recordar que el listado de maquinarias se modifica desde la estructura daily, por lo que debe solicitar al administrador para poder agregar o quitar alguno.</p>
             </Box>
             <Box sx={{ width: '95%', margin: '0 auto', justifyContent: 'center', alignItems: 'center' }}>
                 <MaterialReactTable table={table} />
@@ -318,7 +320,7 @@ function useCreateRow() {
     return useMutation({
         mutationFn: async (fieldData) => {
             console.log('fieldData:', fieldData);
-            const response = await axios.post(`${BASE_URL}/valuesPrograma`, fieldData);
+            const response = await axios.post(`${BASE_URL}/dailyPrograma`, fieldData);
             return response.data;
         },
         onSuccess: () => {
@@ -328,14 +330,14 @@ function useCreateRow() {
     });
 }
 
-
 //READ hook (get users from api)
 function useGetRows(contract_id) {
 
     return useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const response = await axios.get(`${BASE_URL}/getValuesPrograma/${contract_id}`);
+            const name_sheet = 'Maquinarias';
+            const response = await axios.get(`${BASE_URL}/getDailyPrograma/${contract_id}/${name_sheet}`);
             var rowsResponse = response.data;
             if (!rowsResponse) {
                 rowsResponse = [];
@@ -344,35 +346,30 @@ function useGetRows(contract_id) {
                 console.log('no es array:');
                 rowsResponse = [rowsResponse];
             }
+            console.log('entro');
+            console.log('rowsResponse:', rowsResponse);
 
-
-                const groupedByItemId = rowsResponse.reduce((acc, item) => {
-                  if (!acc[item.item_id]) {
-                    acc[item.item_id] = {
-                      item_id: item.item_id,
-                        item: item.item,
-                      contract_id: item.contract_id,
-                      created_at: item.created_at,
-                      updated_at: item.updated_at,
+            //agrupo todo por el item para que me quede como una row de un solo item con todas sus fechas (columnas)
+            const groupedByItemId = rowsResponse.reduce((acc, item) => {
+                if (!acc[item.categoria]) {
+                    acc[item.categoria] = {
+                        categoria: item.categoria,
+                        contract_id: item.contract_id,
+                        created_at: item.created_at,
+                        updated_at: item.updated_at,
 
                     };
-                  }
-                  acc[item.item_id][item.date] = item.value;
-                  return acc;
-                }, {});
-            
-                const rows = Object.values(groupedByItemId);
+                }
+                acc[item.categoria][item.date] = item.value;
+                return acc;
+            }, {});
 
-            
-
-                console.log('rows:', rows);
-
-                return {
-                    valuesPrograma: rowsResponse,
-                    rows: rows
-                  };
-
-
+            const rows = Object.values(groupedByItemId);
+            console.log('rows:', rows);
+            return {
+                valuesPrograma: rowsResponse,
+                rows: rows
+            };
         },
 
 
@@ -386,10 +383,10 @@ function useUpdateRow() {
 
     return useMutation({
         mutationFn: async (field) => {
-            const response = await axios.put(`${BASE_URL}/updateValuePrograma`, field);
+            const response = await axios.put(`${BASE_URL}/updateDailyPrograma`, field);
             return response.data;
         },
-      
+
         onSettled: () => {
             queryClient.invalidateQueries(['users']);
         },
@@ -402,7 +399,7 @@ function useDeleteRow() {
     return useMutation({
         mutationFn: async ({ data }) => {
             console.log('data:', data);
-            await axios.delete(`${BASE_URL}/valuesPrograma`, {
+            await axios.delete(`${BASE_URL}/dailyPrograma`, {
                 data: { data }
             });
         },
@@ -418,10 +415,9 @@ function useDeleteRow() {
 
 const queryClient = new QueryClient();
 
-const ExampleWithProviders = ({ contract_id, datacolumns, items }) => (
-
+const ExampleWithProviders = ({ contract_id, datacolumns, items, listaMaq }) => (
     <QueryClientProvider client={queryClient}>
-        <Example dataColumns={datacolumns} contract_id={contract_id} items = {items} />
+        <Example dataColumns={datacolumns} contract_id={contract_id} items={items} listaMaq={listaMaq} />
     </QueryClientProvider>
 );
 
@@ -448,7 +444,6 @@ function validateUser(user) {
 
 function validateRow(row) {
     return {
-        item: !validateRequired(row.item) ? 'Item is Required' : '',
+        item: !validateRequired(row.categoria) ? 'Maquinaria is Required' : '',
     };
 }
-  

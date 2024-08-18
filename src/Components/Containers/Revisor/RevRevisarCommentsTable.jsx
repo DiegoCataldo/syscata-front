@@ -88,10 +88,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
       {
         accessorKey: 'comentario_codelco',
         header: 'Comentario Codelco',
-
-        //remove any previous validation errors when user focuses on the input
-
-
+        enableSorting: true,
         muiEditTextFieldProps: {
           required: true,
           error: !!validationErrors?.comentario_codelco,
@@ -241,14 +238,13 @@ console.log('paso');
 
   useEffect(() => {
     //scroll to the top of the table when the sorting changes
-    console.log('validationErrors', validationErrors);
     if (!rowVirtualizerInstanceRef.current) return;
     try {
       rowVirtualizerInstanceRef.current?.scrollToIndex?.(0);
     } catch (error) {
       console.error(error);
     }
-  }, [sorting, validationErrors]);
+  }, [sorting]);
 
 
   const sendData = async () => {
@@ -288,6 +284,7 @@ console.log('paso');
     columnVirtualizerOptions: { overscan: 2 }, //optionally customize the column virtualizer
     enableRowVirtualization: true,
     onSortingChange: setSorting,
+
     getRowId: (row) => row.id,
     enableRowNumbers: true,
     muiTableContainerProps: { sx: { minHeight: '500px', maxHeight: '800px' } },
@@ -360,6 +357,7 @@ console.log('paso');
       showAlertBanner: isLoadingUsersError,
       showProgressBars: isFetchingUsers,
       isSaving: isCreatingField || isUpdatingField || isDeletingField,
+      sorting,
     },
   });
 

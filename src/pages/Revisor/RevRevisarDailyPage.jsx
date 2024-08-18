@@ -22,11 +22,12 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
   const [rol_info, setRol_info] = useState(0);
-  const { accessToken, currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
+const contract_id = currentUser.contract_id;
+const role_id = currentUser.role_id;
 
-
-  const { id, contract_id, role_id } = useParams()
+  const { id } = useParams()
 
   const totalSteps = () => {
     return steps.length;

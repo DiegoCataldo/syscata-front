@@ -32,22 +32,21 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
     if (contract_id) {
         try {
             const response = await axios.get(`${BASE_URL}/contracts/${contract_id}`);
-            console.log('res', response.data)
             const contractvar = response.data;
             setContract(response.data);
             const fecha_inicio = new Date(contractvar.fecha_inicio);
             const fecha_fin = new Date(contractvar.fecha_fin);
             const mondays = getMondays(fecha_inicio, fecha_fin);
             let columns  = mondays;
-            columns = [{ name: "item" }, ...columns];
-             console.log('columns', columns);
+            columns = [{ name: "item"} ,{ name: 'description'},{ name: 'unidad' }, ...columns];
+            //console.log('columns', columns);
             setColumns(columns);
           
             const responseItem = await axios.get(`${BASE_URL}/getItems/${contract_id}`);
             var items = responseItem.data;
             items.sort((a, b) => a.item.localeCompare(b.item));
             setItems(items);
-            console.log('items', items)
+            //console.log('items', items)
 
 
         } catch (error) {
