@@ -129,6 +129,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   };
 
 
+  
 
   // Función para manejar el cambio en "HH trabajadas"
   const handleHH = (event, field, row, table) => {
