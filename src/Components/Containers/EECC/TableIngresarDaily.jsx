@@ -138,7 +138,7 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     setRowValuesTemp(prevValues => ({
       ...prevValues,
       [`${field.name}-${idSheet}`]: newValue,
-    }));
+    })); 
   };
   const handleJornada = (event, field, row, table) => {
     const newValue = event.target.value;
