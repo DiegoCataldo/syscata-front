@@ -15,10 +15,10 @@ export default function Login() {
     const [errors, setErrors] = useState(null)
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
-    const { accessToken, setAccessToken, setCurrentUser } = useContext(AuthContext)
+    const { accessToken, setAccessToken, setCurrentUser, currentUser } = useContext(AuthContext)
 
     useEffect(() => {
-        if (accessToken) navigate('/')
+        if (accessToken && currentUser?.role_id != null ) navigate('/')
     }, [accessToken])
 
     const handleSubmit = async (e) => {
@@ -41,7 +41,7 @@ export default function Login() {
                 setEmail('')
                 setPassword('')
                 toast.success(response.data.message)
-                navigate('/')
+                navigate('/SRContracts')
             }
         } catch (error) {
             setLoading(false)

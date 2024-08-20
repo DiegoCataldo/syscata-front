@@ -25,16 +25,6 @@ const ContractsPage = () => {
         }
     };
 
-    const handleDeleteContract = async (id) => {
-        try {
-            await axios.delete(`${BASE_URL}/contracts/${id}`);
-            toast.success('Contrato eliminado exitosamente');
-            setContracts(prevContracts => prevContracts.filter(contract => contract.id !== id));
-        } catch (error) {
-            toast.error('Error al eliminar el contrato. Intente más tarde.');
-            console.error('Error al eliminar el contrato:', error);
-        }
-    };
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -51,11 +41,9 @@ const ContractsPage = () => {
          sx={{ width: '95%', margin: '0 auto', mt: 4}}
        >
         <div>
-            <h2>Administrar Contratos</h2>
+            <h2>Seleccionar Contratos</h2>
             <Box display="flex" justifyContent="flex-end" mb={2}>
-                <Button type="submit" variant="contained" color="primary" component={Link} to="/contracts/create">
-                    Crear Contrato
-                </Button>
+               
             </Box>
             <ContractTable 
                 contracts={contracts}
@@ -64,7 +52,6 @@ const ContractsPage = () => {
                 totalCount={totalCount}
                 handleChangePage={handleChangePage}
                 handleChangeRowsPerPage={handleChangeRowsPerPage}
-                onDeleteContract={handleDeleteContract}
             />
         </div>
         </Box>

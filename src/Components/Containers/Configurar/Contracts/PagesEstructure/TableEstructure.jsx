@@ -290,26 +290,33 @@ const Table = ({ handleCreateField, handleSaveField, openDeleteConfirmModal, fie
         </DialogActions>
       </>
     ),
+    // row.original.name != 'Item' esto es ya que el item deberia modificarse solo desde la seccion programa
     renderRowActions: ({ row, table }) => (
+      
       <Box sx={{ display: 'flex', gap: '1rem' }}>
+      {row.original.is_standard !== 'Si' && (
         <Tooltip title="Edit">
           <IconButton onClick={() => table.setEditingRow(row)}>
             <EditIcon />
           </IconButton>
         </Tooltip>
-        {row.original.field_type === 'list' && (
+      )}
+        {row.original.field_type === 'list' && row.original.name != 'Item' && (
           <Tooltip title="Listas">
             <IconButton onClick={() => handleOpenModal(row)}>
               <ListIcon />
             </IconButton>
           </Tooltip>
         )}
+          {row.original.is_standard !== 'Si' && (
         <Tooltip title="Delete">
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
+      )}
       </Box>
+
     ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Box>
