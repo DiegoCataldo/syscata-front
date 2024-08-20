@@ -6,6 +6,15 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: 'build', // Change this to 'build' if needed
+  },
+});
+/*
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'build', // Change this to 'build' if needed
     
   },
 }); 
