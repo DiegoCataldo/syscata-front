@@ -8,8 +8,10 @@ export default defineConfig({
     outDir: 'build', // Change this to 'build' if needed
   },
 });
-/*
 
+
+/*
+PRODUCCION
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
@@ -18,3 +20,4 @@ export default defineConfig({
     
   },
 }); 
+*/
