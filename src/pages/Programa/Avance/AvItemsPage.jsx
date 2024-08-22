@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
@@ -9,14 +9,17 @@ import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem
 import TableItems from '../../../Components/Containers/Programa/Avance/AvItemsTable'
 import axios from 'axios';
 import { BASE_URL } from '../../../helpers/config';
+import { AuthContext } from '../../../Components/context/authContext'
+
 
 
 
 // const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
 
 const IngresarPrograma = ({ onSubmit, users, companies }) => {
+  const { accessToken, currentUser } = useContext(AuthContext);
 
-  const {  contract_id } = useParams()
+  const contract_id = currentUser.contract_id;
   const [contract, setContract] = useState(null);
   const [mondays, setMondays] = useState([]);
 

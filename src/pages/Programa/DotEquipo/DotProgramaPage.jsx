@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
@@ -9,6 +9,8 @@ import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem
 import TableDotacion from '../../../Components/Containers/Programa/DotEquipo/DotDotacionTable'
 import TableMaq from '../../../Components/Containers/Programa/DotEquipo/DotMaqTable'
 import TableCargoMaq from '../../../Components/Containers/Programa/DotEquipo/DotCargoMaqTable'
+import { AuthContext } from '../../../Components/context/authContext'
+
 
 
 import axios from 'axios';
@@ -20,10 +22,12 @@ import { set } from 'react-hook-form';
 // const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
 
 const IngresarPrograma = ({ onSubmit, users, companies }) => {
+  const { accessToken, currentUser } = useContext(AuthContext);
+
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
-  const { contract_id } = useParams()
+  const contract_id = currentUser.contract_id;
   const [contract, setContract] = useState(null);
   const [mondays, setMondays] = useState([]);
   const [columns, setColumns] = useState([]);

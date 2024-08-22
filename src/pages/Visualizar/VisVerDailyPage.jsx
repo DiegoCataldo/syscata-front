@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
@@ -8,7 +8,7 @@ import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem
 import TableEECC from '../../Components/Containers/Visualizar/VisVerDailyTable'
 import TableResumen from '../../Components/Containers/Visualizar/VisverDailyResumen'
 import TableComentarios from '../../Components/Containers/Visualizar/VisVerCommentsTable'
-
+import { AuthContext } from '../../Components/context/authContext'
 import axios from 'axios';
 import { BASE_URL } from '../../helpers/config';
 
@@ -20,9 +20,13 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [activeStep, setActiveStep] = React.useState(0);
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
+  const { accessToken, currentUser } = useContext(AuthContext);
+  const [dailyInfo, setDailyInfo] = useState({});
+
+  const contract_id = currentUser.contract_id;
 
 
-  const { daily_id, contract_id } = useParams()
+  const { daily_id } = useParams()
 
   const totalSteps = () => {
     return steps.length;
@@ -72,6 +76,12 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
 
       setSteps(updatedStepsOrdenados);
 
+      const responseDaily = await axios.get(`${BASE_URL}/getDaily/${daily_id}`)
+      var Daily_info = responseDaily.data;
+
+      setDailyInfo(Daily_info);
+
+
     } catch (error) {
       console.error('Error al obtener pasos y campos:', error);
     }
@@ -110,9 +120,19 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
 
   };
 
+  const formatDateTime = (date) => {
+    const parsedDate = new Date(date);
+    const utcDate = new Date(parsedDate.getTime() + parsedDate.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = utcDate.toLocaleDateString('es-ES', options);
+    return formattedDate;
+};
+
+  const datedaily = dailyInfo.date ? formatDateTime(dailyInfo.date) : '';
+
   return (
     <Box sx={{ width: '90%', margin: '0 auto' }}>
-      <h2 style={{ textAlign: 'center' }}>Visualizar Daily</h2>
+      <h2 style={{ textAlign: 'center' }}>Visualizar Daily de: {datedaily}</h2>
       <Box component="form" sx={{ width: '95%', margin: '0 auto' }}>
         <Box sx={{ width: '100%' }}>
           <Stepper nonLinear activeStep={activeStep} >

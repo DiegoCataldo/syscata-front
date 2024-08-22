@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
@@ -9,6 +9,8 @@ import { Grid, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem
 import TableAvance from '../../../Components/Containers/Programa/Avance/AvProgramaTable'
 import axios from 'axios';
 import { BASE_URL } from '../../../helpers/config';
+import { AuthContext } from '../../../Components/context/authContext'
+
 import { set } from 'react-hook-form';
 
 
@@ -17,7 +19,10 @@ import { set } from 'react-hook-form';
 
 const IngresarPrograma = ({ onSubmit, users, companies }) => {
 
-  const {  contract_id } = useParams()
+  const { accessToken, currentUser } = useContext(AuthContext);
+
+  const contract_id = currentUser.contract_id;
+
   const [contract, setContract] = useState(null);
   const [mondays, setMondays] = useState([]);
   const [columns, setColumns] = useState([]);

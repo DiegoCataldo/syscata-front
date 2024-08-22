@@ -1,15 +1,15 @@
 import React, { useEffect, useState , useContext}  from 'react';
-import DailysTable from '../../Components/Containers/Aprobador/AproListaDailysTable';
+import DailysTable from '../../../Components/Containers/Configurar/Companies/ConfListaCompaniesTable';
 import { Box, Button } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { BASE_URL } from '../../helpers/config';
+import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
-import { AuthContext } from '../../Components/context/authContext'
+import { AuthContext } from '../../../Components/context/authContext'
 
 const ContractsPage = () => {
     const {currentUser } = useContext(AuthContext);
-    const [dailys, setDailys] = useState([]);
+    const [companies, setCompanies] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [totalCount, setTotalCount] = useState(0);
@@ -23,14 +23,13 @@ const ContractsPage = () => {
 
     const fetchDailys = async (page, rowsPerPage) => {
         try {
-            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}&page=${page}&per_page=${rowsPerPage}`);
-            const dailys = response.data;
-            const filteredDailys = dailys.filter(daily => daily.state_id === 2 || daily.state_id === 3);
+            const response = await axios.get(`${BASE_URL}/companies`);
+            const companies = response.data;
 
-            setDailys(filteredDailys);
+            setCompanies(companies);
             setTotalCount(response.data.total);
         } catch (error) {
-            console.error('Error al obtener los Dailys:', error);
+            console.error('Error al obtener las empresas:', error);
         }
     };
 
@@ -48,12 +47,12 @@ const ContractsPage = () => {
         <Box
          sx={{ width: '95%', margin: '0 auto', mt: 4}}>
         <div>
-            <h2>Aprobar Daily Report</h2>
+            <h2>Gestionar Empresas</h2>
             <Box display="flex" justifyContent="flex-end" mb={2}>
 
             </Box>
             <DailysTable 
-                dailys={dailys}
+                companies={companies}
                 page={page}
                 rowsPerPage={rowsPerPage}
                 totalCount={totalCount}

@@ -98,7 +98,7 @@ const Example = ({ dataColumns, contract_id, items }) => {
                                 step: '0.01',
                                 pattern: "[0-9]*\\.?[0-9]+",
                                 onKeyPress: (event) => {
-                                    if (event.key === ',' || event.key === '-' || event.key === '+' || event.key === 'e') {
+                                    if (event.key === '.'  || event.key === '+' || event.key === 'e') {
                                         event.preventDefault();
                                     }
                                 },
@@ -328,6 +328,12 @@ const Example = ({ dataColumns, contract_id, items }) => {
                         table.setCreatingRow(null);
                         //se setea el dropdown solo del item seleccionado para que no pueda editar el item
                         setItemsDropdown([row.original.item]);
+                        setRowValuesTemp(prevValues => ({
+                            ...prevValues,
+                            item: row.original.item,
+                            description: row.original.description,
+                            unidad: row.original.unidad,
+                        }));
                         table.setEditingRow(row);
                     }}>
                         <EditIcon />

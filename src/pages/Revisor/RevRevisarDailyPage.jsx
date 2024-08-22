@@ -23,6 +23,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [steps, setSteps] = useState([]);
   const [rol_info, setRol_info] = useState(0);
   const { currentUser } = useContext(AuthContext);
+  const [dailyInfo, setDailyInfo] = useState({});
 
 const contract_id = currentUser.contract_id;
 const role_id = currentUser.role_id;
@@ -81,6 +82,10 @@ const role_id = currentUser.role_id;
       const responseRol = await axios.get(`${BASE_URL}/getRolinfo/${role_id}`)
       // console.log('responseRol', responseRol.data);
       setRol_info(responseRol.data);
+      
+      const responseDaily = await axios.get(`${BASE_URL}/getDaily/${id}`)
+      var Daily_info = responseDaily.data;
+      setDailyInfo(Daily_info);
 
     } catch (error) {
       console.error('Error al obtener pasos y campos:', error);
@@ -126,11 +131,21 @@ const role_id = currentUser.role_id;
 
   };
 
+  const formatDateTime = (date) => {
+    const parsedDate = new Date(date);
+    const utcDate = new Date(parsedDate.getTime() + parsedDate.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = utcDate.toLocaleDateString('es-ES', options);
+    return formattedDate;
+};
+
+  const datedaily = dailyInfo.date ? formatDateTime(dailyInfo.date) : '';
+
   return (
     <Box
       // onSubmit=""
       sx={{ width: '90%', margin: '0 auto' }}
-    >   <h2 style={{ textAlign: 'center' }}>Revisar Daily</h2>
+    >   <h2 style={{ textAlign: 'center' }}>Revisar Daily de: {datedaily}</h2>
 
       <Box
         component="form"

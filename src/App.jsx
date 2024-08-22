@@ -41,6 +41,7 @@ import SRContracts from "./pages/SelectRol/SRContractsPage"
 import SRRole from "./pages/SelectRol/SRRolePage"
 import ConfListaDailys from "./pages/Configurar/Daily/ConfListaDailysPage"
 import ConfEditDaily from "./pages/Configurar/Daily/ConfEditDailyPage"
+import ConfListaCompanies from "./pages/Configurar/Companies/ConfListaCompaniesPage"
 
 
 
@@ -108,24 +109,26 @@ function App() {
                     <Route path="/RevContracts/" element={<ProtectedRoute><RevContracts/></ProtectedRoute>} />
                     <Route path="/RevRolesSelect/:contract_id" element={<ProtectedRoute><RevRolesSelect/></ProtectedRoute>} />
                     <Route path="/RevListaDailys/" element={<ProtectedRoute><RevListaDailys/></ProtectedRoute>} />
-                    <Route path="/RevRevisarDaily/:id/:contract_id/:role_id" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
+                    <Route path="/RevRevisarDaily/:id/" element={<ProtectedRoute><RevRevisarDaily/></ProtectedRoute>} />
                     <Route path="/RevDailyRevisado/:daily_id/:contract_id/:state_id/:nombre_area" element={<ProtectedRoute><RevDailyRevisado/></ProtectedRoute>} />    
                     <Route path="/AproContracts/" element={<ProtectedRoute><AproContracts/></ProtectedRoute>} />
                     <Route path="/AproListaDailys/" element={<ProtectedRoute><AproListaDailys/></ProtectedRoute>} />
-                    <Route path="/AproAprobarDaily/:id/:contract_id" element={<ProtectedRoute><AproAprobarDaily/></ProtectedRoute>} />
+                    <Route path="/AproAprobarDaily/:id/" element={<ProtectedRoute><AproAprobarDaily/></ProtectedRoute>} />
                     <Route path="/AproDailyAproRech/:daily_id/:contract_id/:respuesta/" element={<ProtectedRoute><AproDailyAproRech/></ProtectedRoute>} />    
                     <Route path="/VisContracts/" element={<ProtectedRoute><VisContracts/></ProtectedRoute>} />    
                     <Route path="/VisListaDailys/" element={<ProtectedRoute><VisListaDailys /></ProtectedRoute>} />
-                    <Route path="/VisVerDaily/:daily_id/:contract_id" element={<ProtectedRoute><VisVerDaily/></ProtectedRoute>} />
+                    <Route path="/VisVerDaily/:daily_id/" element={<ProtectedRoute><VisVerDaily/></ProtectedRoute>} />
                     <Route path="/AvListaContracts/" element={<ProtectedRoute><AvListaContracts/></ProtectedRoute>} />   
-                    <Route path="/AvPrograma/:contract_id" element={<ProtectedRoute><AvPrograma /></ProtectedRoute>} />
+                    <Route path="/AvPrograma/" element={<ProtectedRoute><AvPrograma /></ProtectedRoute>} />
                     <Route path="/AvItems/:contract_id" element={<ProtectedRoute><AvItems /></ProtectedRoute>} />
                     <Route path="/DotListaContracts/" element={<ProtectedRoute><DotListaContracts/></ProtectedRoute>} />   
-                    <Route path="/DotPrograma/:contract_id" element={<ProtectedRoute><DotPrograma /></ProtectedRoute>} />
+                    <Route path="/DotPrograma/" element={<ProtectedRoute><DotPrograma /></ProtectedRoute>} />
                     <Route path="/SRContracts/" element={<ProtectedRouteSRContracts><SRContracts /></ProtectedRouteSRContracts>} />
                     <Route path="/SRRole/:contract_id" element={<ProtectedRouteSRContracts><SRRole /></ProtectedRouteSRContracts>} />
                     <Route path="/ConfListaDailys/" element={<ProtectedRoute><ConfListaDailys /></ProtectedRoute>} />
                     <Route path="/ConfEditDaily/:daily_id" element={<ProtectedRoute><ConfEditDaily /></ProtectedRoute>} />
+                    <Route path="/ConfListaCompanies/" element={<ProtectedRoute><ConfListaCompanies /></ProtectedRoute>} />
+
 
  
 

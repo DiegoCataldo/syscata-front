@@ -24,7 +24,7 @@ import { Container } from '@mui/material';
 
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-import HomeIcon from '@mui/icons-material/Home';
+import CottageIcon from '@mui/icons-material/Cottage';
 import MailIcon from '@mui/icons-material/Mail';
 import BadgeIcon from '@mui/icons-material/Badge';
 import GroupIcon from '@mui/icons-material/Group';
@@ -42,6 +42,7 @@ import FireTruckIcon from '@mui/icons-material/FireTruck';
 import Collapse from '@mui/material/Collapse';
 import AGlogo from '../../assets/img/AG.png'
 import DTSlogo from '../../assets/img/DTS.png'
+import BusinessIcon from '@mui/icons-material/Business';
 
 
 
@@ -221,7 +222,7 @@ export default function Header() {
                         <ListItem component={Link} to="/" key="Inicio" sx={{ color: 'white' }}>
                             <ListItemButton>
                                 <ListItemIcon sx={{ color: 'white' }}>
-                                    <HomeIcon />
+                                    <CottageIcon />
                                 </ListItemIcon>
                                 <ListItemText primary="Inicio" />
                             </ListItemButton>
@@ -259,9 +260,17 @@ export default function Header() {
                                     <ListItem component={Link} to="/ConfListaDailys"  key="Gestionar Dailys" sx={{ color: 'white' }}>
                                         <ListItemButton sx={{ pl: 4 }}>
                                             <ListItemIcon sx={{ color: 'white' }}>
-                                                <GroupIcon />
+                                                <AssignmentIcon />
                                             </ListItemIcon>
                                             <ListItemText primary="Gestionar Dailys" />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    <ListItem component={Link} to="/ConfListaCompanies"  key="Gestionar Empresas" sx={{ color: 'white' }}>
+                                        <ListItemButton sx={{ pl: 4 }}>
+                                            <ListItemIcon sx={{ color: 'white' }}>
+                                                <BusinessIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary="Gestionar Empresas" />
                                         </ListItemButton>
                                     </ListItem>
                                 </List>
@@ -348,7 +357,7 @@ export default function Header() {
                         {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 8) && (
                         <Collapse in={openPrograma} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
-                                <ListItem component={Link} to="/AvListaContracts" key="Avances" sx={{ color: 'white' }}>
+                                <ListItem component={Link} to="/AvPrograma" key="Avances" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <BadgeIcon />
@@ -356,7 +365,7 @@ export default function Header() {
                                         <ListItemText primary="Avances" />
                                     </ListItemButton>
                                 </ListItem>
-                                <ListItem component={Link} to="/DotListaContracts" key="Dotación" sx={{ color: 'white' }}>
+                                <ListItem component={Link} to="/DotPrograma" key="Dotación" sx={{ color: 'white' }}>
                                     <ListItemButton sx={{ pl: 4 }}>
                                         <ListItemIcon sx={{ color: 'white' }}>
                                             <GroupIcon />

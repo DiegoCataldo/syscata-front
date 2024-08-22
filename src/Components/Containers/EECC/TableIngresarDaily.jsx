@@ -118,9 +118,19 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
             value: rowValuesTemp[field.name] || '',
           }),
 
+          ...((field.name === 'Cantidad') && fetchedData?.sheetname === 'Avances' && {
+            type: 'number',
+            inputProps: {
+                step: '0.01',
+                pattern: "[0-9]*\\.?[0-9]+",
+                onKeyPress: (event) => {
+                    if (event.key === '.'  || event.key === '+' || event.key === 'e') {
+                        event.preventDefault();
+                    }
+                },
+            },
+        }),
 
-
-         
 
             ...(field.name === 'Estado Personal' && fetchedData?.sheetname === 'Personal' && { onChange: (e) => handleEstado(e, field, row, table) }),
             ...(field.name === 'Jornada' && fetchedData?.sheetname === 'Personal' && { onChange: (e) => handleJornada(e, field, row, table) }),
@@ -154,7 +164,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
       });
   }, [fields, validationErrors, rowValuesTemp, HHtrabajadasTable, HMoperativasTable, HMnoOperativasTable, HMmantencion, HMenPanne, HHTotalesInt, PersInv, HMTotalesInt, subCategorias, fetchedData]);
 
-  console.log('columns:', columns);
 
   const handleOpenModal = async () => {
     await fetchDailys();
@@ -307,7 +316,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
     }));
   };
 
-
   const handleCategoriaInt = (event, field, row, table) => {
     const categoria = event.target.value;
     const subcategorias = subcategoriasInt.find((cat) => cat.categoria === categoria);
@@ -315,8 +323,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
     setSubCategorias(subcategorias.subcategorias);
    
   };
-
-
 
   const resetRowValues = () => {
     setRowValuesTemp({});
@@ -345,6 +351,22 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
     if (!values[hhtrabajadasValues]) {
       values[hhtrabajadasValues] = rowValuesTemp[hhtrabajadasRowValues];
     }
+
+    console.log('values', values);
+    console.log('rowValuesTemp', rowValuesTemp);
+
+    const descripcionItemValues = `Descripción item-${idSheet}`;
+    const descripcionItemRowValues = `Descripción item`;
+    if (!values[descripcionItemValues]) {
+      values[descripcionItemValues] = rowValuesTemp[descripcionItemRowValues];
+    }
+
+    const unidadValues = `Unidad-${idSheet}`;
+    const unidadValuesRow = `Unidad`;
+    if (!values[unidadValues]) {
+      values[unidadValues] = rowValuesTemp[unidadValuesRow];
+    }
+
     //transfmar nombres de fields de la row a nombres de fields de la tabla
     //toda esta transformaciom es para guardar en la tabla bbdd de valuesRow
     var transformedValues = [];
@@ -523,7 +545,35 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '150px' }}>
         <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '8px' }}>
           <Tooltip title="Editar" sx={{}}>
-            <IconButton onClick={() => table.setEditingRow(row)}>
+          <IconButton onClick={() => {
+            
+                        //quito cualquier fila que se pueda estar creando o editando
+                        table.setEditingRow(null);
+                        table.setCreatingRow(null);
+                        //seteo los valores de la fila en rowValuesTemp
+                      console.log('row.original:', row.original);
+                      if (fetchedData.sheetname === 'Avances') {
+
+                        console.log('columns:', columns);
+                        const itemname = `Item-${idSheet}`;
+                        const itemValue = row.original[itemname];
+                        const descriptionname = `Descripción item-${idSheet}`;
+                        const descriptionValue = row.original[descriptionname];
+                        const unidadname = `Unidad-${idSheet}`;
+                        const unidadValue = row.original[unidadname];
+                        setRowValuesTemp(prevValues => ({
+                          ...prevValues,
+                          item: itemValue,
+                        "Descripción item": descriptionValue,
+                          Unidad: unidadValue,
+                      }));
+
+
+                    };
+                      table.setEditingRow(row);
+                    }
+                  }>
+                        
               <EditIcon />
             </IconButton>
           </Tooltip>

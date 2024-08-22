@@ -22,6 +22,7 @@ const IngresarDaily = ({ onSubmit, users, companies }) => {
   const [completed, setCompleted] = React.useState({});
   const [steps, setSteps] = useState([]);
   const { accessToken, currentUser } = useContext(AuthContext);
+  const [dailyInfo, setDailyInfo] = useState({});
 
 
 
@@ -77,6 +78,13 @@ const fetchStepsAndFields = async () => {
 
       setSteps(updatedStepsOrdenados);
 
+       
+      const responseDaily = await axios.get(`${BASE_URL}/getDaily/${id}`)
+      var Daily_info = responseDaily.data;
+      console.log('Daily_info:', Daily_info);
+
+      setDailyInfo(Daily_info);
+
   } catch (error) {
       console.error('Error al obtener pasos y campos:', error);
   }
@@ -120,11 +128,21 @@ const fetchStepsAndFields = async () => {
     
   };
 
+  const formatDateTime = (date) => {
+    const parsedDate = new Date(date);
+    const utcDate = new Date(parsedDate.getTime() + parsedDate.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = utcDate.toLocaleDateString('es-ES', options);
+    return formattedDate;
+};
+
+  const datedaily = dailyInfo.date ? formatDateTime(dailyInfo.date) : '';
+
   return (
     <Box
    // onSubmit=""
     sx={{ width: '90%', margin: '0 auto' }}
-  >   <h2 style={{ textAlign: 'center' }}>Revisar Daily</h2>
+  >   <h2 style={{ textAlign: 'center' }}>Aprobación Daily de: {datedaily}</h2>
 
       <Box
         component="form"

@@ -248,9 +248,6 @@ console.log('paso');
 
 
   const sendData = async () => {
-    console.log('fetchedData', fetchedData);
-
-
 
     const user_id = currentUser.id;
     const revision = fetchedData.daily_info.revision;
@@ -259,6 +256,9 @@ console.log('paso');
 
     if (response.status === 200) {
       navigate(`/RevDailyRevisado/${idDaily}/${contract_id}/${fetchedData.state_id}/${nombreArea}`);
+    }else{
+      // en caso de ser administrador y no haber seleccionado el rol de revisor, dara error el response
+      toast.error('Error al revisar el daily report, recuerde estar en rol de revisor adecuado');
     }
   }
 

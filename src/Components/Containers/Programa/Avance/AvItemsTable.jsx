@@ -241,7 +241,7 @@ const Example = ({ contract_id }) => {
                         variant="contained"
                         onClick={() => {
 
-                            navigate(`/AvPrograma/${contract_id}`);
+                            navigate(`/AvPrograma/`);
 
                         }}
                     >

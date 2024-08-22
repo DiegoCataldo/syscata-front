@@ -27,6 +27,7 @@ const IngresarDaily = ({ }) => {
   const [items, setItems] = useState([]);
 
   const contract_id = currentUser.contract_id;
+  //daily_id
   const { id } = useParams()
 
   const totalSteps = () => {
@@ -76,7 +77,7 @@ const IngresarDaily = ({ }) => {
       updatedStepsOrdenados = [...updatedStepsOrdenados, FinalizarStep];
 
 
-      const responseItem = await axios.get(`${BASE_URL}/getItems/${id}`);
+      const responseItem = await axios.get(`${BASE_URL}/getItems/${contract_id}`);
       let items = responseItem.data;
       //asigno el nombre de items.item a el campo item.value
       items.forEach((item, index) => {
@@ -85,6 +86,7 @@ const IngresarDaily = ({ }) => {
         items.sort((a, b) => a.item.localeCompare(b.item));
         
         setItems(items);
+        console.log('items:', items);
 
         updatedStepsOrdenados.forEach((step) => {
           if (step.sheet === "Avances") {
@@ -161,11 +163,20 @@ const IngresarDaily = ({ }) => {
 
   };
 
+  const formatDateTime = (date) => {
+    const parsedDate = new Date(date);
+    const utcDate = new Date(parsedDate.getTime() + parsedDate.getTimezoneOffset() * 60000);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = utcDate.toLocaleDateString('es-ES', options);
+    return formattedDate;
+};
+  const datedaily = dailyInfo.date ? formatDateTime(dailyInfo.date) : '';
+
   return (
     <Box
       // onSubmit=""
       sx={{ width: '90%', margin: '0 auto' }}
-    >   <h2 style={{ textAlign: 'center' }}>Ingresar Daily</h2>
+    >   <h2 style={{ textAlign: 'center' }}>Ingresar Daily de: {datedaily}</h2>
 
       <Box
         component="form"

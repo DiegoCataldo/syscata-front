@@ -14,10 +14,6 @@ const DailyEnviado = () => {
 
     const { daily_id, contract_id, state_id, nombre_area } = useParams()
 
-    console.log(state_id);
-    console.log(daily_id);
-    console.log(contract_id);
-    console.log(nombre_area);
     return (
         <Box sx={{ width: '95%', margin: '0 auto', mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
