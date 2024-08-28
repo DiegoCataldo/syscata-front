@@ -106,8 +106,6 @@ const TableMaquinas = ({ data }) => {
 }
 
 const TableAvances = ({ data }) => {
-
-
     const columns = useMemo(
         () => [
             {
@@ -198,11 +196,11 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
             const categoria = row[CategoriaName];
             const hhTrabajadas = parseFloat(row[HHtrabajadasName]) || 0;
             const dotTrabajando = row[estadoName] === "Trabajando" ? 1 : 0;
-            const dotDescanso = row[estadoName] === "Descanso" ? 1 : 0;
+            const dotDescanso = row[estadoName] === "Descansando" ? 1 : 0;
             const dotTotal = 1;
             //defino la estructura de la data
             if (!acc[categoria]) {
-                acc[categoria] = { categoria, hh_trabajadas: 0, dot_trabajando: dotTrabajando, dot_descanso: dotDescanso, dot_total: dotTotal, subRows: [] };
+                acc[categoria] = { categoria, hh_trabajadas: 0, dot_trabajando: 0, dot_descanso: 0, dot_total: 0, subRows: [] };
             }
 
             acc[categoria].hh_trabajadas += hhTrabajadas;
@@ -220,7 +218,7 @@ const TablasResumen = ({ data, idDaily, contract_id, currentUser, dailyInfo }) =
                 const area = row[areaName];
                 const hhTrabajadas = parseFloat(row[HHtrabajadasName]) || 0;
                 const dotTrabajando = row[estadoName] === "Trabajando" ? 1 : 0;
-                const dotDescanso = row[estadoName] === "Descanso" ? 1 : 0;
+                const dotDescanso = row[estadoName] === "Descansando" ? 1 : 0;
                 const dotTotal = 1;
 
                 if (!acc[area]) {

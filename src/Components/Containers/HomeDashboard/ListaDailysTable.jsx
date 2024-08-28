@@ -27,7 +27,6 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
 
 
     const handleEdit = (row) => {
-        console.log(row);
         const daily_id = row.original.id;
         navigate(`/VisVerDaily/${daily_id}`);
         /*
@@ -40,7 +39,6 @@ const DailysTable = ({ dailys, page, rowsPerPage, totalCount, handleChangePage, 
         }¨
         */
     }
-    console.log(dailys);
     const columns = useMemo(
         () => [
 
@@ -191,7 +189,7 @@ const formatDateTime = (dateTimeString) => {
         enableRowVirtualization: true,
         onSortingChange: setSorting,
         getRowId: (row) => row.id,
-        muiTableContainerProps: { sx: { minHeight: '500px', maxHeight: '800px' } },
+        muiTableContainerProps: { sx: { minHeight: '100px', maxHeight: '400px' } },
         muiPaginationProps: {
             rowsPerPageOptions: [10, 50, 100, 1000, 2000],
             showFirstButton: true,
@@ -203,6 +201,7 @@ const formatDateTime = (dateTimeString) => {
                 textAlign: 'center',
                 border: '0.01px solid rgba(81, 81, 81, .08)',
                 fontWeight: 'normal',
+                padding: '3px', // Adjust the padding to change the density
             },
         },
         muiTableHeadCellProps: {
@@ -210,6 +209,7 @@ const formatDateTime = (dateTimeString) => {
                 align: 'center',
                 textAlign: 'center',
                 border: '0.01px solid rgba(81, 81, 81, .08)',
+                padding: '4px', // Adjust the padding to change the density
 
 
             },

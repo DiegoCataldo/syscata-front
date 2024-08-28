@@ -204,7 +204,7 @@ const TablasResumen = ({ data, idDaily, contract_id }) => {
             const dotTotal = 1;
             //defino la estructura de la data
             if (!acc[categoria]) {
-                acc[categoria] = { categoria, hh_trabajadas: 0, dot_trabajando: dotTrabajando, dot_descanso: dotDescanso, dot_total: dotTotal, subRows: [] };
+                acc[categoria] = { categoria, hh_trabajadas: 0, dot_trabajando: 0, dot_descanso: 0, dot_total: 0, subRows: [] };
             }
 
             acc[categoria].hh_trabajadas += hhTrabajadas;

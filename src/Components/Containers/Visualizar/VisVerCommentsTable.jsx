@@ -30,6 +30,12 @@ import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import SaveIcon from '@mui/icons-material/Save';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
+import ExcelJS from 'exceljs';
+
 
 
 const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }) => {
@@ -161,6 +167,65 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
 
 
 
+  const handleExportPDF = (rows) => {
+    const doc = new jsPDF();
+    let tableData = rows.map((row) => Object.values(row.original));
+    tableData = tableData.map(row => row.slice(1));
+    const tableHeaders = columns.map((c) => c.header);
+
+    autoTable(doc, {
+      head: [tableHeaders],
+      body: tableData,
+    });
+
+    doc.save('mrt-pdf-example.pdf');
+  };
+  const handleExportExcel = async () => {
+    
+    if (!fetchedData || !fetchedData.comentarios || fetchedData.comentarios.length === 0) {
+      console.error('No data available to export');
+      return;
+    }
+    console.log('fetchedData:', fetchedData.comentarios);
+  
+    // Obtener los encabezados de columns.header
+    const headers = columns.map(column => column.header);
+  
+    // Crear un nuevo libro de trabajo y una hoja de trabajo
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Comentarios');
+  
+    // Agregar encabezados
+    worksheet.addRow(headers);
+  
+    // Agregar datos filtrados
+    fetchedData.comentarios.forEach((comentario) => {
+      const filteredData = {
+        revision: comentario.revision,
+        user_name: comentario.user_name,
+        role_name: comentario.role_name,
+        comentario_codelco: comentario.comentario_codelco,
+        comentario_eecc: comentario.comentario_eecc
+      };
+      worksheet.addRow(Object.values(filteredData));
+    });
+  
+    // Generar el archivo Excel y descargarlo
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'export.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
+
+
+
+
   const table = useMaterialReactTable({
     columns,
     data: fetchedData.comentarios ? fetchedData.comentarios : [],
@@ -214,10 +279,34 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser, rol_info }
       </div>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Box sx={{ display: 'flex', gap: '1rem' }}>
-      
-      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: '16px',
+          padding: '8px',
+          flexWrap: 'wrap',
+        }}
+      >
+        <Button
+          disabled={table.getPrePaginationRowModel().rows.length === 0}
+          //export all rows, including from the next page, (still respects filtering and sorting)
+          onClick={() =>
+            handleExportPDF(table.getPrePaginationRowModel().rows)
+          }
+          startIcon={<FileDownloadIcon />}
+        >
+          Exportar a PDF
+        </Button>
+        <Button
 
+          //export all rows as seen on the screen (respects pagination, sorting, filtering, etc.)
+          onClick={handleExportExcel}
+          startIcon={<FileDownloadIcon />}
+        >
+          Exportar a Excel
+        </Button>
+
+      </Box>
     ),
     state: {
       isLoading: isLoadingUsers,

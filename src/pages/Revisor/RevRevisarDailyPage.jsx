@@ -144,13 +144,11 @@ const role_id = currentUser.role_id;
   return (
     <Box
       // onSubmit=""
-      sx={{ width: '90%', margin: '0 auto' }}
-    >   <h2 style={{ textAlign: 'center' }}>Revisar Daily de: {datedaily}</h2>
+      sx={{ width: '90%', margin: '0 auto', mt: '1rem' }}
+    >   <h2 style={{ textAlign: 'center' }}>Revisar Daily: {datedaily}</h2>
 
       <Box
-        component="form"
-        // onSubmit=""
-        sx={{ width: '95%', margin: '0 auto' }}
+        component="form" sx={{ width: '95%', margin: '0 auto', mt: '2rem' }}
       >
         <Box sx={{ width: '100%' }}>
           <Stepper nonLinear activeStep={activeStep} >

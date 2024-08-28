@@ -32,6 +32,8 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
+import ExcelJS from 'exceljs';
+
 
 const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -265,15 +267,11 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     }
   }, [sorting]);
 
-  const csvConfig = mkConfig({
-    fieldSeparator: ',',
-    decimalSeparator: '.',
-    useKeysAsHeaders: true,
-  });
 
   const handleExportPDF = (rows) => {
     const doc = new jsPDF();
-    const tableData = rows.map((row) => Object.values(row.original));
+    let tableData = rows.map((row) => Object.values(row.original));
+    tableData = tableData.map(row => row.slice(1));
     const tableHeaders = columns.map((c) => c.header);
 
     autoTable(doc, {
@@ -284,11 +282,36 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     doc.save('mrt-pdf-example.pdf');
   };
 
-  const handleExportCSV = () => {
-    const csv = generateCsv(csvConfig)(fetchedData.rows);
-    download(csvConfig)(csv);
-  };
 
+  const handleExportExcel = async () => {
+    if (!fetchedData || !fetchedData.rows || fetchedData.rows.length === 0) {
+      console.error('No data available to export');
+      return;
+    }
+  
+    // Crear un nuevo libro de trabajo y una hoja de trabajo
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Rows');
+  
+    // Agregar encabezados, quitando todo lo que venga después de "-"
+    const headers = Object.keys(fetchedData.rows[0]).map(header => header.split('-')[0]);
+    worksheet.addRow(headers);
+  
+    // Agregar datos
+    fetchedData.rows.forEach((row) => {
+      worksheet.addRow(Object.values(row));
+    });
+  
+    // Generar el archivo Excel y descargarlo
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'export.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const table = useMaterialReactTable({
     columns,
@@ -331,10 +354,10 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
         <Button
 
           //export all rows as seen on the screen (respects pagination, sorting, filtering, etc.)
-          onClick={handleExportCSV}
+          onClick={handleExportExcel}
           startIcon={<FileDownloadIcon />}
         >
-          Exportar a CSV
+          Exportar a Excel
         </Button>
 
       </Box>
@@ -459,10 +482,8 @@ function useGetRows(idDaily, idSheet) {
         rowsResponse = [];
       }
       if (!Array.isArray(rowsResponse)) {
-        console.log('no es array:');
         rowsResponse = [rowsResponse];
       }
-      console.log('response:', response.data.values);
       //dejo los fields como el nombre de la columna + idSheet para que no se repitan
       var fields = response.data.steps.find(step => step.idSheet === idSheet).fields;
       fields = fields.map((field) => {
@@ -471,15 +492,18 @@ function useGetRows(idDaily, idSheet) {
       });
 
       const steps = response.data.steps;
+      const dataSinIdSheet = response.data.values_SinIdSheet;
+      /*
       console.log('steps:', steps);
       console.log('rowsResponse:', rowsResponse);
-      console.log('fields:', fields);
+      console.log('fields:', fields); */
 
 
 
       return {
         fields: fields,
-        rows: rowsResponse
+        rows: rowsResponse,
+        dataSinIdSheet: dataSinIdSheet,
       };
 
     },
