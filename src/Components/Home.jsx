@@ -824,7 +824,7 @@ export default function Home() {
 
     const cardInfoContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv17}>
                         <Grid style={styles.cardDiv18}>
@@ -836,33 +836,33 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Información General
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Información General
                             </h6>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} class="">Nombre Contrato</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} class="">{contract.nombre_contrato}
+                            <div className="row">
+                                <div className="col-sm-6">
+                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Nombre Contrato</p>
+                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.nombre_contrato}
                                     </h6>
                                 </div>
-                                <div class="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} class="">API</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} class="">{contract.API}
+                                <div className="col-sm-6">
+                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">API</p>
+                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.API}
                                     </h6>
                                 </div>
-                                <div class="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} class="">Proyecto</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} class="">{contract.proyecto}
+                                <div className="col-sm-6">
+                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Proyecto</p>
+                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.proyecto}
                                     </h6>
                                 </div>
-                                <div class="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} class="">Fecha Inicio</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} class="">{formatDate(contract.fecha_inicio)}
+                                <div className="col-sm-6">
+                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Fecha Inicio</p>
+                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{formatDate(contract.fecha_inicio)}
                                     </h6>
                                 </div>
-                                <div class="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} class="">Fecha Término</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} class="">{formatDate(contract.fecha_fin)}
+                                <div className="col-sm-6">
+                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Fecha Término</p>
+                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{formatDate(contract.fecha_fin)}
                                     </h6>
                                 </div>
                             </div>
@@ -874,7 +874,7 @@ export default function Home() {
     };
     const cardEECCContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv19}>
                         <Grid style={styles.cardDiv18}>
@@ -886,10 +886,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Encargados EECC
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Encargados EECC
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.encargadoContratista?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
@@ -909,7 +909,7 @@ export default function Home() {
     };
     const cardRevisoresPYCContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
                         <Grid style={styles.cardDiv18}>
@@ -921,10 +921,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Revisores P&C
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores P&C
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.revisorPYC?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
@@ -949,7 +949,7 @@ export default function Home() {
     };
     const cardRevisoresCCContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
                         <Grid style={styles.cardDiv18}>
@@ -961,10 +961,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Revisores Construcción
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Construcción
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.revisorCC?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
@@ -990,7 +990,7 @@ export default function Home() {
     };
     const cardRevisoresRRLLContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
                         <Grid style={styles.cardDiv18}>
@@ -1002,10 +1002,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Revisores Relaciones Laborales
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Relaciones Laborales
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.revisorRRLL?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
@@ -1030,7 +1030,7 @@ export default function Home() {
     };
     const cardRevisoresOtroContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
                         <Grid style={styles.cardDiv18}>
@@ -1042,10 +1042,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Revisores Otra Área
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Otra Área
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.revisorOtraArea?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
@@ -1069,7 +1069,7 @@ export default function Home() {
     };
     const cardAprobadorContract = () => {
         return (
-            <div class="card user-card-full" style={styles.cardDiv15}>
+            <div className="card user-card-full" style={styles.cardDiv15}>
                 <Grid container style={styles.cardDiv16}>
                     <Grid item xs={4} md={4} lg={4} style={styles.cardDiv21}>
                         <Grid style={styles.cardDiv18}>
@@ -1081,10 +1081,10 @@ export default function Home() {
                         </Grid>
                     </Grid>
                     <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} class="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} class="">Aprobadores
+                        <div style={{ padding: '1.25rem' }} className="card-block">
+                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Aprobadores
                             </h6>
-                            <div class="row">
+                            <div className="row">
 
                                 {contract.aprobadorCodelco?.map((encargado, index) => (
                                     <div className="col-sm-6" key={index}>
