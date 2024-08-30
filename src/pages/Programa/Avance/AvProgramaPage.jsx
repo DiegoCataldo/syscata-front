@@ -81,7 +81,9 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
 
   return (
     <Box sx={{ width: '90%', margin: '0 auto' }}>
+      <Box sx={{ mt: '1.2rem' }}>
       <h2 style={{ textAlign: 'center' }}>Avances Programa</h2>
+      </Box>
       <p style={{ textAlign: 'center' }}>En esta sección podrá ingresar el avance programado de las partidas críticas del contrato</p>
 
 

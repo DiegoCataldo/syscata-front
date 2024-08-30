@@ -65,7 +65,9 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
 
   return (
     <Box sx={{ width: '90%', margin: '0 auto' }}>
+        <Box sx={{ mt: '1.2rem' }}>
       <h2 style={{ textAlign: 'center' }}>Gestionar Items Contrato</h2>
+      </Box>
       <p style={{ textAlign: 'center' }}>En esta sección podrá gestionar los items del contrato, estos serán los que se podrán elegir al momento de declarar avance real (dailys) y del programa</p>
               <Grid item xs={12} sx={{ padding: '20px' }}>
               <TableItems contract_id={contract_id}  />;

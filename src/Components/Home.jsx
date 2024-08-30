@@ -478,9 +478,7 @@ export default function Home() {
             setListAcciones(listAcciones);
 
             const responseContract = await axios.get(`${BASE_URL}/contracts/${contract_id}`);
-            //console.log('res', response.data)
             setContract(responseContract.data);
-            console.log('contract', responseContract.data);
 
 
         } catch (error) {
@@ -1153,7 +1151,8 @@ export default function Home() {
                 <div className="col-md-10 mx-auto">
                     <div className="card">
                         <div className="card-body">
-                            <h2 className="text-center mt-2" style={{ marginTop: '1rem' }}> Dashboard Estatus Daily Report </h2>
+                            <h2 className="text-center mt-2" style={{ marginTop: '1rem' }}>Estatus General Daily Report </h2>
+                            <h3 className="text-center mt-2" style={{ marginTop: '0rem', color:'#6f6f6f' }}>{contract.nombre_contrato} </h3>
                             <div style={{ display: 'flex', justifyContent: 'center' }}></div>
 
                             {cardsStatusDailys()}
@@ -1176,8 +1175,7 @@ export default function Home() {
                                 <Grid className='dd ' sx={{ mt: '3rem' }} item xs={12} md={4} lg={4}>
                                     <h3 className="text-center mt-2" style={{ marginBottom: '1rem' }}> Información Contrato </h3>
                                     <Carousel
-                                        next={(next, active) => console.log(`we left ${active}, and are now at ${next}`)}
-                                        prev={(prev, active) => console.log(`we left ${active}, and are now at ${prev}`)}
+
                                         autoPlay={false} // Deshabilita el avance automático
                                         navButtonsAlwaysVisible={true}
                                     >

@@ -30,6 +30,8 @@ import { BASE_URL } from '../../../helpers/config';
 import { toast } from 'react-toastify';
 import { subcategoriasInt } from './subcategoriasInt';
 import { set } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+
 
 const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -39,6 +41,8 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10000);
   const [subCategorias, setSubCategorias] = useState([]);
+  const navigate = useNavigate();
+
 
 
 
@@ -324,11 +328,14 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
    
   };
 
+  const handleImportar = () => {
+    navigate(`/EECCImportar/${idDaily}/${idSheet}`);
+
+  }
+
   const resetRowValues = () => {
     setRowValuesTemp({});
   }
-
-
 
   // Hooks y manejadores de Crear, Actualizar, Eliminar
   const { mutateAsync: createField, isPending: isCreatingField } = useCreateField();
@@ -351,9 +358,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
     if (!values[hhtrabajadasValues]) {
       values[hhtrabajadasValues] = rowValuesTemp[hhtrabajadasRowValues];
     }
-
-    console.log('values', values);
-    console.log('rowValuesTemp', rowValuesTemp);
 
     const descripcionItemValues = `Descripción item-${idSheet}`;
     const descripcionItemRowValues = `Descripción item`;
@@ -591,7 +595,10 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, items }) => {
           NUEVO REGISTRO
         </Button>
         <Button variant="contained" color="secondary" onClick={handleOpenModal}>
-          Precargar Data de un DR  anterior
+          Cargar Data de un DR  anterior
+        </Button>
+        <Button variant="contained" color="secondary" onClick={handleImportar}>
+          Importar Data
         </Button>
       </Box>
 

@@ -294,12 +294,14 @@ const TableP = ({ fields, idSheet, idDaily, contract_id }) => {
     const worksheet = workbook.addWorksheet('Rows');
   
     // Agregar encabezados, quitando todo lo que venga después de "-"
-    const headers = Object.keys(fetchedData.rows[0]).map(header => header.split('-')[0]);
+    const headers = Object.keys(fetchedData.rows[0]).map(header => header.split('-')[0]).filter(header => header !== 'id');;
     worksheet.addRow(headers);
   
     // Agregar datos
+
     fetchedData.rows.forEach((row) => {
-      worksheet.addRow(Object.values(row));
+      const rowData = Object.values(row).slice(1);
+      worksheet.addRow(rowData);
     });
   
     // Generar el archivo Excel y descargarlo

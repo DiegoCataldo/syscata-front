@@ -42,6 +42,7 @@ import SRRole from "./pages/SelectRol/SRRolePage"
 import ConfListaDailys from "./pages/Configurar/Daily/ConfListaDailysPage"
 import ConfEditDaily from "./pages/Configurar/Daily/ConfEditDailyPage"
 import ConfListaCompanies from "./pages/Configurar/Companies/ConfListaCompaniesPage"
+import EECCImportar from "./pages/EECC/EECCImportarPage"
 
 
 
@@ -128,7 +129,7 @@ function App() {
                     <Route path="/ConfListaDailys/" element={<ProtectedRoute><ConfListaDailys /></ProtectedRoute>} />
                     <Route path="/ConfEditDaily/:daily_id" element={<ProtectedRoute><ConfEditDaily /></ProtectedRoute>} />
                     <Route path="/ConfListaCompanies/" element={<ProtectedRoute><ConfListaCompanies /></ProtectedRoute>} />
-
+                    <Route path="/EECCImportar/:daily_id/:idSheet" element={<ProtectedRoute><EECCImportar /></ProtectedRoute>} />
 
  
 
