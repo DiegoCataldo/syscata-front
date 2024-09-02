@@ -137,7 +137,7 @@ const IngresarPrograma = ({ onSubmit, users, companies }) => {
 
   const getMondays = (startDate, endDate) => {
     let current = new Date(startDate);
-    current.setDate(current.getDate() + (1 + 7 - current.getDay()) % 7); // Set to next Monday
+    current.setDate(current.getDate() - (current.getDay() + 6) % 7); // Set to previous Monday
     const mondays = [];
     while (current <= endDate) {
       mondays.push({ name: formatDate(current) });
