@@ -43,6 +43,8 @@ import Collapse from '@mui/material/Collapse';
 import AGlogo from '../../assets/img/AG.png'
 import DTSlogo from '../../assets/img/DTS.png'
 import BusinessIcon from '@mui/icons-material/Business';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import PeopleIcon from '@mui/icons-material/People';
 
 
 
@@ -56,6 +58,7 @@ export default function Header() {
     const [openConfigurar, setOpenConfigurar] = React.useState(true);
     const [openDailys, setOpenDailys] = React.useState(true);
     const [openPrograma, setOpenPrograma] = React.useState(true);
+    const [openAnalitica, setOpenAnalitica] = React.useState(true);
 
     const handleClickConfigurar = () => {
         setOpenConfigurar(!openConfigurar);
@@ -66,6 +69,9 @@ export default function Header() {
     const handleClickPrograma = () => {
 
         setOpenPrograma(!openPrograma);
+    };
+    const handleClickAnalitica = () => {
+        setOpenAnalitica(!openAnalitica);
     };
 
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -342,8 +348,6 @@ export default function Header() {
 
                         {/* TERMINA lista de Dailys */}
 
-
-
                         {/* COMIENZA lista de Programa */}
                         {currentUser && (currentUser.is_super_admin === 'Si' || currentUser.role_id === 8) && (
                         <ListItemButton onClick={handleClickPrograma}>
@@ -379,6 +383,42 @@ export default function Header() {
                         )}
 
                         {/* TERMINA lista de Programa */}
+
+                          {/* COMIENZA lista de Analitica */}
+                          {currentUser  && (
+                        <ListItemButton onClick={handleClickAnalitica}>
+                            <ListItemIcon sx={{ color: 'white' }}>
+                                <AssessmentIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Analítica" />
+                            {openAnalitica ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+                        )}
+                        {currentUser && (
+                        <Collapse in={openAnalitica} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
+                                <ListItem component={Link} to="/AnPersonal" key="Personal" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <PeopleIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Personal" />
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem component={Link} to="/AnMaquinaria" key="Maquinaria" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <FireTruckIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="Maquinaria" />
+                                    </ListItemButton>
+                                </ListItem>
+
+                            </List>
+                        </Collapse>
+                        )}
+
+                        {/* TERMINA lista de Analitica */}
 
 
                     </List>

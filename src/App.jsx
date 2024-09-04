@@ -43,6 +43,8 @@ import ConfListaDailys from "./pages/Configurar/Daily/ConfListaDailysPage"
 import ConfEditDaily from "./pages/Configurar/Daily/ConfEditDailyPage"
 import ConfListaCompanies from "./pages/Configurar/Companies/ConfListaCompaniesPage"
 import EECCImportar from "./pages/EECC/EECCImportarPage"
+import AnPersonal from "./pages/Analitica/PersonalPage"
+
 
 
 
@@ -130,6 +132,7 @@ function App() {
                     <Route path="/ConfEditDaily/:daily_id" element={<ProtectedRoute><ConfEditDaily /></ProtectedRoute>} />
                     <Route path="/ConfListaCompanies/" element={<ProtectedRoute><ConfListaCompanies /></ProtectedRoute>} />
                     <Route path="/EECCImportar/:daily_id/:idSheet" element={<ProtectedRoute><EECCImportar /></ProtectedRoute>} />
+                    <Route path="/AnPersonal/" element={<ProtectedRoute><AnPersonal /></ProtectedRoute>} />
 
  
 
