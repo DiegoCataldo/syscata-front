@@ -93,7 +93,7 @@ function App() {
     return (
         <AuthContext.Provider value={{ accessToken, setAccessToken, currentUser, setCurrentUser }}>
             <BrowserRouter>
-                {currentUser && <Header />}
+                <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/homeDTS" element={<ProtectedRoute><HomeDTS /></ProtectedRoute>} />
