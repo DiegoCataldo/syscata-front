@@ -44,6 +44,8 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -433,8 +435,15 @@ const styles = {
     },
 };
 
-
+const handleScrollToAbout = () => {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+        aboutSection.scrollIntoView({ behavior: 'smooth' });
+    }
+};
 export default function Home() {
+    const navigate = useNavigate();
+
   
     return (
         <Box>
@@ -448,18 +457,14 @@ export default function Home() {
                             </h2>
                         </Box>
                         <Box display="flex" justifyContent="center">
-                            <Tooltip title="Aprobar Daily Report" sx={{
+                            <Tooltip  sx={{
                                 m: '2rem', maxWidth: ' 300px', padding: '1.25rem 2rem', letterSpacing: '.15rem',
                             }}>
                                 <Button
-                                    id="aprobarButton"
+                                    id="nosotrosButtton"
                                     style={{ backgroundColor: '#64a19d' }}
                                     variant="contained"
-                                    onClick={() => {
-                                        if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
-                                            aprobarDaily();
-                                        }
-                                    }}
+                                    onClick={handleScrollToAbout}
                                 >
                                     NOSOTROS
                                 </Button>
@@ -508,7 +513,7 @@ export default function Home() {
                                                 <p style={{ color: '#rgb(131 130 130)', textAlign: 'justify' }} className="mb-0 text-white-50 text-lg-left">
                                                     "Daily Track System" es un Sistema de reportabilidad y analítica diaria, que permite a los usuarios, llevar un control del personal, maquinarias y actividades diarias,  ademas de una gran flexibilidad a la hora de configurar la información necesaria a llenar, permitiendo acomodarse a las distintas necesidades y estandares de las empresas.
                                                 </p>
-                                                <Tooltip title="Aprobar Daily Report" sx={{
+                                                <Tooltip title="" sx={{
                                                     m: '2rem', maxWidth: ' 300px', padding: '0.5rem 1rem', letterSpacing: '.15rem',
                                                 }}>
                                                     <Button
@@ -516,9 +521,7 @@ export default function Home() {
                                                         style={{ backgroundColor: '#64a19d' }}
                                                         variant="contained"
                                                         onClick={() => {
-                                                            if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
-                                                                aprobarDaily();
-                                                            }
+                                                            navigate('/homeDTS')
                                                         }}
                                                     >
                                                         IR A DTS
@@ -549,7 +552,7 @@ export default function Home() {
                                                 <p style={{ color: '#rgb(131 130 130)', textAlign: 'justify' }} className="mb-0 text-white-50 text-lg-left">
                                                     "Weekly Track System" es un Sistema de reportabilidad y analítica Semanal, que permite a los usuarios, llevar un control de los avances de la obra de un proyecto.
                                                 </p>
-                                                <Tooltip title="Aprobar Daily Report" sx={{
+                                                <Tooltip title="" sx={{
                                                     m: '2rem', maxWidth: ' 300px', padding: '0.5rem 1rem', letterSpacing: '.15rem',
                                                 }}>
                                                     <Button
@@ -557,9 +560,7 @@ export default function Home() {
                                                         style={{ backgroundColor: '#64a19d' }}
                                                         variant="contained"
                                                         onClick={() => {
-                                                            if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
-                                                                aprobarDaily();
-                                                            }
+                                                         
                                                         }}
                                                     >
                                                         PROXIMAMENTE
