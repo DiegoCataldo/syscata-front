@@ -226,11 +226,11 @@ const styles = {
         marginTop: '-24px',
         opacity: 1,
         // background: 'linear-gradient(195deg, rgb(255, 0, 115), rgb(127, 0, 0))',
-        background: '#ffe2e5',
+        background: '#eee5ff',
         color: 'rgb(255, 255, 255)',
         borderRadius: '0.75rem',
         boxShadow: 'rgba(0, 0, 0, 0.14) 0rem 0.25rem 1.25rem 0rem, rgba(64, 64, 64, 0.4) 0rem 0.4375rem 0.625rem -0.3125rem',
-        border: '1px solid #ff1744',
+        border: '1px solid rgb(201 47 255)',
     },
     cardBackIconBlue: {
         display: 'flex',
@@ -328,6 +328,22 @@ const styles = {
         boxShadow: 'rgba(0, 0, 0, 0.14) 0rem 0.25rem 1.25rem 0rem, rgba(64, 64, 64, 0.4) 0rem 0.4375rem 0.625rem -0.3125rem',
         border: '1px solid #00a0ef',
     },
+    listIconPurple: {
+        display: 'flex',
+        WebkitBoxPack: 'center',
+        justifyContent: 'center',
+        WebkitBoxAlign: 'center',
+        alignItems: 'center',
+        width: '2.7rem',
+        height: '2.7rem',
+        marginTop: '0px',
+        opacity: 1,
+        background: '#eee5ff',
+        color: 'rgb(255, 255, 255)',
+        borderRadius: '1rem',
+        boxShadow: 'rgba(0, 0, 0, 0.14) 0rem 0.25rem 1.25rem 0rem, rgba(64, 64, 64, 0.4) 0rem 0.4375rem 0.625rem -0.3125rem',
+        border: '1px solid rgb(201 47 255)',
+    },
     listIconGreen: {
         display: 'flex',
         WebkitBoxPack: 'center',
@@ -407,7 +423,7 @@ const styles = {
     },
     cardDiv20: {
         borderRadius: '5px 0 0 5px',
-        background: 'linear-gradient(to right, rgb(255 43 85), rgb(255 93 93))',
+        background: 'linear-gradient(to right, rgb(201, 47, 255), rgb(201 47 255))',
         padding: '20px 0',
         height: '100%',
     },
@@ -504,9 +520,9 @@ export default function Home() {
             newStyle.color = 'rgb(209 166 0)';
         } else if (event.title === "Revision Pendiente") {
             newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid #ff1744';
+            newStyle.border = '1px solid rgb(201 47 255)';
             newStyle.borderRadius = '0.75rem';
-            newStyle.color = '#ff1744';
+            newStyle.color = 'rgb(201 47 255)';
 
         } else if (event.title === "Aprobación Pendiente") {
             newStyle.backgroundColor = 'white';
@@ -583,7 +599,7 @@ export default function Home() {
                                         <div style={styles.cardBackIconRed} className="MuiBox-root css-79or14">
                                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                                 <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <ContentPasteSearchIcon sx={{ color: 'rgb(209 0 85)' }} />
+                                                    <ContentPasteSearchIcon sx={{ color: 'rgb(201 47 255)' }} />
                                                 </ListItemIcon>
                                             </div>
 
@@ -754,7 +770,7 @@ export default function Home() {
 
             return (
                 <div style={accion === "Envío" ? (styles.listIconYellow)
-                    : accion === "Revisión" ? (styles.listIconBlue)
+                    : accion === "Revisión" ? (styles.listIconPurple)
                         : accion === "Rechazo" ? (styles.listIconRed)
                             : accion === "Aprobación" ? (styles.listIconGreen)
                                 : accion === "Finalización sin acuerdo" ? (styles.listIconGrey)
@@ -765,7 +781,7 @@ export default function Home() {
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <ListItemIcon sx={{ color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0.3rem' }}>
                             {accion === "Envío" ? (<ContentPasteGoIcon sx={{ color: 'rgb(209 166 0)' }} />)
-                                : accion === "Revisión" ? (<ContentPasteSearchIcon sx={{ color: '#00a0ef' }} />)
+                                : accion === "Revisión" ? (<ContentPasteSearchIcon sx={{ color: 'rgb(201 47 255)' }} />)
                                     : accion === "Rechazo" ? (<ReportOffIcon sx={{ color: '#ff1744' }} />)
                                         : accion === "Aprobación" ? (<AssignmentTurnedInIcon sx={{ color: '#03b52b' }} />)
                                             : accion === "Finalización sin acuerdo" ? (<AssignmentLateIcon sx={{ color: '#6c6c6c' }} />)

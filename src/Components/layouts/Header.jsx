@@ -61,7 +61,6 @@ export default function Header() {
     const [openAnalitica, setOpenAnalitica] = React.useState(false);
     const [openServicios, setOpenServicios] = React.useState(false);
     const location = useLocation();
-console.log(location.pathname)
 
     const handleClickConfigurar = () => {
         setOpenConfigurar(!openConfigurar);
