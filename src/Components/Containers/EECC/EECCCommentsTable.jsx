@@ -209,10 +209,6 @@ const TableP = ({ fields, idSheet, idDaily, contract_id, currentUser }) => {
     }
   }, [sorting, validationErrors]);
 
-
-
-
-
   const table = useMaterialReactTable({
     columns,
     data: fetchedData.comentarios ? fetchedData.comentarios : [],

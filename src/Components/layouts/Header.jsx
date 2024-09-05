@@ -45,7 +45,7 @@ import DTSlogo from '../../assets/img/DTS.png'
 import BusinessIcon from '@mui/icons-material/Business';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import PeopleIcon from '@mui/icons-material/People';
-
+import { useLocation } from 'react-router-dom';
 
 
 
@@ -55,10 +55,13 @@ export default function Header() {
     const { accessToken, setAccessToken, currentUser, setCurrentUser } = useContext(AuthContext);
     const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-    const [openConfigurar, setOpenConfigurar] = React.useState(true);
-    const [openDailys, setOpenDailys] = React.useState(true);
-    const [openPrograma, setOpenPrograma] = React.useState(true);
-    const [openAnalitica, setOpenAnalitica] = React.useState(true);
+    const [openConfigurar, setOpenConfigurar] = React.useState(false);
+    const [openDailys, setOpenDailys] = React.useState(false);
+    const [openPrograma, setOpenPrograma] = React.useState(false);
+    const [openAnalitica, setOpenAnalitica] = React.useState(false);
+    const [openServicios, setOpenServicios] = React.useState(false);
+    const location = useLocation();
+console.log(location.pathname)
 
     const handleClickConfigurar = () => {
         setOpenConfigurar(!openConfigurar);
@@ -72,6 +75,9 @@ export default function Header() {
     };
     const handleClickAnalitica = () => {
         setOpenAnalitica(!openAnalitica);
+    };
+    const handleClickServicios = () => {
+        setOpenServicios(!openServicios);
     };
 
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -115,8 +121,126 @@ export default function Header() {
     };
     const drawerWidth = 240;
 
-    return (
-        <Box sx={{ display: 'flex', backgroundColor: '#39383F' }}>
+    const homeHeader = () => {
+        return(
+            <Box sx={{ display: 'flex', backgroundColor: '#39383F' }}>
+            <CssBaseline />
+            <AppBar
+                position="relative" sx={{ backgroundColor: '#39383F' }}
+            >
+                <Container maxWidth="xl">
+                    <Toolbar disableGutters>
+                        <IconButton
+                            size="large"
+                            edge="start"
+                            color="inherit"
+                            aria-label="menu"
+                            onClick={handleDrawerToggle}
+                            sx={{ mr: 2 }}
+                        >
+                            <MenuIcon />
+                        </IconButton>
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component={Link}
+                            to="/homeDTS"
+                            sx={{
+                                mr: 2,
+                                display: { xs: 'none', md: 'flex' },
+                                fontFamily: 'monospace',
+                                fontWeight: 700,
+                                letterSpacing: '.3rem',
+                                color: 'inherit',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <Box
+                                component="img"
+                                sx={{
+
+                                    height: 50,
+                                    width: 150,
+                                    maxHeight: { xs: 233, md: 167 },
+                                    maxWidth: { xs: 350, md: 250 },
+                                }}
+                                alt="The house from the offer."
+                                src={AGlogo}
+                            />
+
+                        </Typography>
+
+                       
+
+
+
+                    </Toolbar>
+                </Container>
+            </AppBar>
+            <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={handleDrawerToggle}
+            >
+                <Box sx={{ width: 250, backgroundColor: '#39383F', height: '100%', color: 'white' }} role="presentation">
+                    <List >
+                        <ListItem component={Link} to="/" key="Inicio" sx={{ color: 'white' }}>
+                            <ListItemButton>
+                                <ListItemIcon sx={{ color: 'white' }}>
+                                    <CottageIcon />
+                                </ListItemIcon>
+                                <ListItemText primary="Inicio" />
+                            </ListItemButton>
+                        </ListItem>
+
+                       
+                          {/* COMIENZA lista de Servicios */}
+         
+                        <ListItemButton onClick={handleClickServicios}>
+                            <ListItemIcon sx={{ color: 'white' }}>
+                                <AssessmentIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Servicios" />
+                            {openServicios ? <ExpandLess /> : <ExpandMore />}
+                        </ListItemButton>
+      
+
+                        <Collapse in={openServicios} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding sx={{ color: 'white', backgroundColor: '#312d2d' }}>
+                                <ListItem component={Link} to="/homeDTS" key="DTS" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <AssignmentIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="DTS" />
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem component={Link} to="/" key="WTS" sx={{ color: 'white' }}>
+                                    <ListItemButton sx={{ pl: 4 }}>
+                                        <ListItemIcon sx={{ color: 'white' }}>
+                                            <FireTruckIcon />
+                                        </ListItemIcon>
+                                        <ListItemText primary="WTS" />
+                                    </ListItemButton>
+                                </ListItem>
+
+                            </List>
+                        </Collapse>
+       
+
+                        {/* TERMINA lista de Servicios */}
+
+
+                    </List>
+                </Box>
+            </Drawer>
+        </Box>
+        )
+    }
+
+    const dtsHeader = () => {
+        return(
+            <Box sx={{ display: 'flex', backgroundColor: '#39383F' }}>
             <CssBaseline />
             <AppBar
                 position="relative" sx={{ backgroundColor: '#39383F' }}
@@ -225,7 +349,8 @@ export default function Header() {
             >
                 <Box sx={{ width: 250, backgroundColor: '#39383F', height: '100%', color: 'white' }} role="presentation">
                     <List >
-                        <ListItem component={Link} to="/" key="Inicio" sx={{ color: 'white' }}>
+                        
+                        <ListItem component={Link} to="/homeDTS" key="Inicio" sx={{ color: 'white' }}>
                             <ListItemButton>
                                 <ListItemIcon sx={{ color: 'white' }}>
                                     <CottageIcon />
@@ -424,6 +549,13 @@ export default function Header() {
                     </List>
                 </Box>
             </Drawer>
+        </Box>
+        )
+    }
+
+    return (
+      <Box>
+            {location.pathname === '/' ? homeHeader() : dtsHeader()}
         </Box>
     );
 }

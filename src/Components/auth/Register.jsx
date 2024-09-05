@@ -18,7 +18,7 @@ export default function Register() {
     const { accessToken } = useContext(AuthContext)
 
     useEffect(() => {
-        if (accessToken) navigate('/')
+        if (accessToken) navigate('/homeDTS')
     }, [accessToken])
 
     const handleSubmit = async (e) => {

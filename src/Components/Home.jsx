@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from './context/authContext'
 import '../assets/css/treeDiagram.css';
-import { Grid, Box } from '@mui/material';
+import { Grid, Box, Tooltip, IconButton, Button, } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -34,6 +34,18 @@ import moment from 'moment-timezone';
 import Carousel from 'react-material-ui-carousel'
 import './Containers/HomeDashboard/style.css'
 import BusinessIcon from '@mui/icons-material/Business';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import tecnologiaImg from '../assets/img/tecnologia.png';
+import DTSimg from '../assets/img/dtsLogo.png';
+import WTSimg from '../assets/img/WTSLogo.png';
+import EmailIcon from '@mui/icons-material/Email';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+
+
 
 
 
@@ -423,779 +435,241 @@ const styles = {
 
 
 export default function Home() {
-    const { accessToken, currentUser } = useContext(AuthContext);
-    const contract_id = currentUser.contract_id;
-
-    const [dailys, setDailys] = useState([]);
-    const [countAllDailys, setCountAllDailys] = useState([]);
-    const [countDailysAlaEspera, setCountDailysAlaEspera] = useState([]);
-    const [countDailysRevision, setCountDailysRevision] = useState([]);
-    const [countDailysAprobacion, setCountDailysAprobacion] = useState([]);
-    const [countDailysAprobados, setCountDailysAprobados] = useState([]);
-    const [countDailysFinalizados, setCountDailysFinalizados] = useState([]);
-    const [calendarEvents, setCalendarEvents] = useState([]);
-    const [view, setView] = useState(Views.WEEK);
-    const [date, setDate] = useState(new Date());
-    const [listAcciones, setListAcciones] = useState([]);
-    const [contract, setContract] = useState([]);
-
-    dayjs.locale('es');
-    const localizer = dayjsLocalizer(dayjs);// para calendario
-
-    useEffect(() => {
-        fetchData(1, 10);
-    }, []);
-
-    const fetchData = async (page, rowsPerPage) => {
-        try {
-            const response = await axios.get(`${BASE_URL}/Dailys?contract_id=${contract_id}`);
-            const dailys = response.data;
-            setDailys(dailys);
-            const countAllDailys = dailys.length;
-            setCountAllDailys(countAllDailys);
-            const countDailysAlaEspera = dailys.filter(daily => daily.state_id === 1).length;
-            setCountDailysAlaEspera(countDailysAlaEspera);
-            const countDailysRevision = dailys.filter(daily => daily.state_id === 2).length;
-            setCountDailysRevision(countDailysRevision);
-            const countDailysAprobacion = dailys.filter(daily => daily.state_id === 3).length;
-            setCountDailysAprobacion(countDailysAprobacion);
-            const countDailysAprobados = dailys.filter(daily => daily.state_id === 4).length;
-            setCountDailysAprobados(countDailysAprobados);
-            const countDailysFinalizados = dailys.filter(daily => daily.state_id === 5).length;
-            setCountDailysFinalizados(countDailysFinalizados);
-
-            const calendarEvents = dailys.map((daily) => ({
-                id: daily.id,
-                title: daily.state_id === 1 ? "A la espera EECC" : daily.state_id === 2 ? "Revision Pendiente" : daily.state_id === 3 ? "Aprobación Pendiente" : daily.state_id === 4 ? "Aprobado" : daily.state_id === 5 ? "Finalizado Sin Acuerdo" : "",
-                allDay: true,
-                start: new Date(daily.date),
-                end: new Date(daily.date),
-            }));
-            setCalendarEvents(calendarEvents);
-
-            const responseListAcciones = await axios.get(`${BASE_URL}/dailyAccionesContract/${contract_id}`);
-            const listAcciones = responseListAcciones.data;
-            setListAcciones(listAcciones);
-
-            const responseContract = await axios.get(`${BASE_URL}/contracts/${contract_id}`);
-            setContract(responseContract.data);
-
-
-        } catch (error) {
-            console.error('Error al obtener los Dailys:', error);
-        }
-    };
-
-    const eventPropGetter = (event) => {
-        let newStyle = {
-            backgroundColor: 'lightgrey',
-            color: 'black',
-            borderRadius: '0px',
-            border: 'none'
-        };
-
-        if (event.title === "A la espera EECC") {
-            newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid rgb(209 166 0)';
-            newStyle.borderRadius = '0.75rem';
-            newStyle.color = 'rgb(209 166 0)';
-        } else if (event.title === "Revision Pendiente") {
-            newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid #ff1744';
-            newStyle.borderRadius = '0.75rem';
-            newStyle.color = '#ff1744';
-
-        } else if (event.title === "Aprobación Pendiente") {
-            newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid #00a0ef';
-            newStyle.borderRadius = '0.75rem';
-            newStyle.color = '#00a0ef';
-        } else if (event.title === "Aprobado") {
-            newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid #03b52b';
-            newStyle.borderRadius = '0.75rem';
-            newStyle.color = '#03b52b';
-        } else if (event.title === "Finalizado Sin Acuerdo") {
-            newStyle.backgroundColor = 'white';
-            newStyle.border = '1px solid #6c6c6c';
-            newStyle.borderRadius = '0.75rem';
-            newStyle.color = '#6c6c6c';
-        }
-
-        return {
-            className: "",
-            style: newStyle
-        };
-    };
-
-    const allViews = ['month'];
-
-    const cardsStatusDailys = () => {
-
-        const porcentajeAprobados = Math.round((countDailysAprobados * 100) / countAllDailys);
-        const porcentajeFinalizados = Math.round((countDailysFinalizados * 100) / countAllDailys);
-        const porcentajeAlaEspera = Math.round((countDailysAlaEspera * 100) / countAllDailys);
-        const porcentajeRevision = Math.round((countDailysRevision * 100) / countAllDailys);
-        const porcentajeAprobacion = Math.round((countDailysAprobacion * 100) / countAllDailys);
-
-        return (
-            <Grid container sx={{ mt: '3rem' }}  >
-
-                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={6} lg={2.4}>
-                    <div style={styles.cardDiv1} className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb">
-                        <div style={styles.cardDiv2} className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6 MuiGrid-grid-lg-3 css-17cu47x">
-                            <div style={styles.cardDiv3} className="MuiBox-root css-rwss59">
-                                <div style={styles.cardDiv4} className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-sa3w6d">
-                                    <div style={styles.cardDiv5} className="MuiBox-root css-p6siio">
-                                        <div style={styles.cardBackIconYellow} className="MuiBox-root css-79or14">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <ContentPasteGoIcon sx={{ color: 'rgb(209 166 0)' }} />
-                                                </ListItemIcon>
-                                            </div>
-
-                                        </div>
-                                        <div style={styles.cardDiv8} className="MuiBox-root css-8k5edi">
-                                            <span style={styles.cardDiv9} className="MuiTypography-root MuiTypography-button css-1dcnter">A la espera EECC</span>
-                                            <h4 style={styles.cardDiv10} className="MuiTypography-root MuiTypography-h4 css-rtlgmj">{countDailysAlaEspera}</h4>
-                                        </div>
-                                    </div>
-                                    <hr style={styles.cardDiv11} className="MuiDivider-root MuiDivider-fullWidth css-2hb8f" />
-                                    <div style={styles.cardDiv12} className="MuiBox-root css-bln954">
-                                        <p style={styles.cardDiv13} className="MuiTypography-root MuiTypography-button css-1fhu5z7">
-                                            <span style={{fontWeight: 600}} className="MuiTypography-root MuiTypography-button css-141aiuc">{porcentajeAlaEspera}%</span>&nbsp;del total de Dailys
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={6} lg={2.4}>
-                    <div style={styles.cardDiv1} className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb">
-                        <div style={styles.cardDiv2} className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6 MuiGrid-grid-lg-3 css-17cu47x">
-                            <div style={styles.cardDiv3} className="MuiBox-root css-rwss59">
-                                <div style={styles.cardDiv4} className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-sa3w6d">
-                                    <div style={styles.cardDiv5} className="MuiBox-root css-p6siio">
-                                        <div style={styles.cardBackIconRed} className="MuiBox-root css-79or14">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <ContentPasteSearchIcon sx={{ color: 'rgb(209 0 85)' }} />
-                                                </ListItemIcon>
-                                            </div>
-
-                                        </div>
-                                        <div style={styles.cardDiv8} className="MuiBox-root css-8k5edi">
-                                            <span style={styles.cardDiv9} className="MuiTypography-root MuiTypography-button css-1dcnter">Revisión Pendiente</span>
-                                            <h4 style={styles.cardDiv10} className="MuiTypography-root MuiTypography-h4 css-rtlgmj">{countDailysRevision}</h4>
-                                        </div>
-                                    </div>
-                                    <hr style={styles.cardDiv11} className="MuiDivider-root MuiDivider-fullWidth css-2hb8f" />
-                                    <div style={styles.cardDiv12} className="MuiBox-root css-bln954">
-                                        <p style={styles.cardDiv13} className="MuiTypography-root MuiTypography-button css-1fhu5z7">
-                                            <span style={{fontWeight: 600}} className="MuiTypography-root MuiTypography-button css-141aiuc">{porcentajeRevision}%</span>&nbsp;del total de Dailys
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={6} lg={2.4}>
-                    <div style={styles.cardDiv1} className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb">
-                        <div style={styles.cardDiv2} className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6 MuiGrid-grid-lg-3 css-17cu47x">
-                            <div style={styles.cardDiv3} className="MuiBox-root css-rwss59">
-                                <div style={styles.cardDiv4} className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-sa3w6d">
-                                    <div style={styles.cardDiv5} className="MuiBox-root css-p6siio">
-                                        <div style={styles.cardBackIconBlue} className="MuiBox-root css-79or14">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <ContentPasteSearchIcon sx={{ color: '#00a0ef' }} />
-                                                </ListItemIcon>
-                                            </div>
-
-                                        </div>
-                                        <div style={styles.cardDiv8} className="MuiBox-root css-8k5edi">
-                                            <span style={styles.cardDiv9} className="MuiTypography-root MuiTypography-button css-1dcnter">Aprobación Pendiente</span>
-                                            <h4 style={styles.cardDiv10} className="MuiTypography-root MuiTypography-h4 css-rtlgmj">{countDailysAprobacion}</h4>
-                                        </div>
-                                    </div>
-                                    <hr style={styles.cardDiv11} className="MuiDivider-root MuiDivider-fullWidth css-2hb8f" />
-                                    <div style={styles.cardDiv12} className="MuiBox-root css-bln954">
-                                        <p style={styles.cardDiv13} className="MuiTypography-root MuiTypography-button css-1fhu5z7">
-                                            <span style={{fontWeight: 600}} className="MuiTypography-root MuiTypography-button css-141aiuc">{porcentajeAprobacion}%</span>&nbsp;del total de Dailys
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={6} lg={2.4}>
-                    <div style={styles.cardDiv1} className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb">
-                        <div style={styles.cardDiv2} className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6 MuiGrid-grid-lg-3 css-17cu47x">
-                            <div style={styles.cardDiv3} className="MuiBox-root css-rwss59">
-                                <div style={styles.cardDiv4} className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-sa3w6d">
-                                    <div style={styles.cardDiv5} className="MuiBox-root css-p6siio">
-                                        <div style={styles.cardBackIconGrey} className="MuiBox-root css-79or14">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <AssignmentLateIcon sx={{ color: '#6c6c6c' }} />
-                                                </ListItemIcon>
-                                            </div>
-
-                                        </div>
-                                        <div style={styles.cardDiv8} className="MuiBox-root css-8k5edi">
-                                            <span style={styles.cardDiv9} className="MuiTypography-root MuiTypography-button css-1dcnter">Finalizados Sin Acuerdo</span>
-                                            <h4 style={styles.cardDiv10} className="MuiTypography-root MuiTypography-h4 css-rtlgmj">{countDailysFinalizados}</h4>
-                                        </div>
-                                    </div>
-                                    <hr style={styles.cardDiv11} className="MuiDivider-root MuiDivider-fullWidth css-2hb8f" />
-                                    <div style={styles.cardDiv12} className="MuiBox-root css-bln954">
-                                        <p style={styles.cardDiv13} className="MuiTypography-root MuiTypography-button css-1fhu5z7">
-                                            <span style={{fontWeight: 600}} className="MuiTypography-root MuiTypography-button css-141aiuc">{porcentajeFinalizados}%</span>&nbsp;del total de Dailys
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={6} lg={2.4}>
-                    <div style={styles.cardDiv1} className="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-3 css-1h77wgb">
-                        <div style={styles.cardDiv2} className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-6 MuiGrid-grid-lg-3 css-17cu47x">
-                            <div style={styles.cardDiv3} className="MuiBox-root css-rwss59">
-                                <div style={styles.cardDiv4} className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-sa3w6d">
-                                    <div style={styles.cardDiv5} className="MuiBox-root css-p6siio">
-                                        <div style={styles.cardBackIconGreen} className="MuiBox-root css-79or14">
-                                            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                <ListItemIcon sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                    <AssignmentTurnedInIcon sx={{ color: '#03b52b' }} />
-                                                </ListItemIcon>
-                                            </div>
-
-                                        </div>
-                                        <div style={styles.cardDiv8} className="MuiBox-root css-8k5edi">
-                                            <span style={styles.cardDiv9} className="MuiTypography-root MuiTypography-button css-1dcnter">Aprobados</span>
-                                            <h4 style={styles.cardDiv10} className="MuiTypography-root MuiTypography-h4 css-rtlgmj">{countDailysAprobados}</h4>
-                                        </div>
-                                    </div>
-                                    <hr style={styles.cardDiv11} className="MuiDivider-root MuiDivider-fullWidth css-2hb8f" />
-                                    <div style={styles.cardDiv12} className="MuiBox-root css-bln954">
-                                        <p style={styles.cardDiv13} className="MuiTypography-root MuiTypography-button css-1fhu5z7">
-                                            <span style={{fontWeight: 600}} className="MuiTypography-root MuiTypography-button css-141aiuc">{porcentajeAprobados}%</span>&nbsp;del total de Dailys
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </Grid>
-
-            </Grid>
-        );
-    };
-
-    const calendario = () => {
-
-        return (
-
-            <div className="row mt-5">
-                <Box className="myCustomHeight" sx={{}}>
-                    <Calendar
-                        localizer={localizer}
-                        events={calendarEvents}
-                        startAccessor="start"
-                        endAccessor="end"
-                        views={allViews}
-                        style={{ height: 500 }}
-                        eventPropGetter={eventPropGetter}
-                        messages={{
-                            allDay: 'Todo el día',
-                            previous: 'Anterior',
-                            next: 'Siguiente',
-                            today: 'Hoy',
-                            month: 'Mes',
-                            week: 'Semana',
-                            day: 'Día',
-                            agenda: 'Agenda',
-                            date: 'Fecha',
-                            time: 'Hora',
-                            event: 'Evento',
-                            noEventsInRange: 'No hay eventos en este rango.',
-                            showMore: total => `+ Ver más (${total})`,
-                            work_week: 'Semana laboral',
-                            yesterday: 'Ayer',
-                            tomorrow: 'Mañana',
-
-                        }}
-                    />
-                </Box>
-
-            </div>
-
-        );
-    }
-    const formatDateTime = (date) => {
-        const timeZone = 'America/Santiago'; // Zona horaria de Chile
-        return moment.tz(date, timeZone).format('DD/MM/YYYY HH:mm');
-    };
-
-    const formatDate = (date) => {
-        const timeZone = 'America/Santiago'; // Zona horaria de Chile
-        return moment.tz(date, timeZone).format('DD/MM/YYYY');
-    };
-    const listActivities = () => {
-
-        const listIcons = (accion) => {
-
-            return (
-                <div style={accion === "Envío" ? (styles.listIconYellow)
-                    : accion === "Revisión" ? (styles.listIconBlue)
-                        : accion === "Rechazo" ? (styles.listIconRed)
-                            : accion === "Aprobación" ? (styles.listIconGreen)
-                                : accion === "Finalización sin acuerdo" ? (styles.listIconGrey)
-                                    : null
-
-
-                } className="MuiBox-root css-79or14">
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <ListItemIcon sx={{ color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '0.3rem' }}>
-                            {accion === "Envío" ? (<ContentPasteGoIcon sx={{ color: 'rgb(209 166 0)' }} />)
-                                : accion === "Revisión" ? (<ContentPasteSearchIcon sx={{ color: '#00a0ef' }} />)
-                                    : accion === "Rechazo" ? (<ReportOffIcon sx={{ color: '#ff1744' }} />)
-                                        : accion === "Aprobación" ? (<AssignmentTurnedInIcon sx={{ color: '#03b52b' }} />)
-                                            : accion === "Finalización sin acuerdo" ? (<AssignmentLateIcon sx={{ color: '#6c6c6c' }} />)
-                                                : null}
-
-                        </ListItemIcon>
-                    </div>
-                </div>)
-        }
-
-        return (
-            <List sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'column', maxHeight: '550px', overflowY: 'auto' }}>
-                {listAcciones.map((accion, index) => (
-                    <Box key={index} sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                        <ListItem alignItems="flex-start">
-                            <ListItemAvatar>
-
-                                {listIcons(accion.accion)}
-
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    <React.Fragment>
-                                        <Typography component="span" variant="body2" sx={{ color: 'text.primary', display: 'inline', fontSize: '1rem' }}>
-                                            DR: {accion.daily_dateformated}
-                                        </Typography>
-                                        <Typography component="span" variant="body2" sx={{ color: '#5d5c5c', display: 'inline', fontSize: '1rem' }}>
-                                            {`- ${accion.accion}`}
-                                        </Typography>
-
-                                    </React.Fragment>
-                                }
-                                secondary={
-                                    <React.Fragment>
-                                        <Typography
-                                            component="span"
-                                            variant="body2"
-                                            sx={{ color: 'text.primary', display: 'inline' }}
-                                        >
-                                            {accion.user_name}
-                                        </Typography>
-                                        {`- Realizado:  ${formatDateTime(accion.created_at)}`}
-                                    </React.Fragment>
-                                }
-                            />
-                        </ListItem>
-                        <Divider variant="inset" component="li" />
-                    </Box>
-                ))}
-
-
-
-            </List>
-        );
-    }
-
-
-    const cardInfoContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv17}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <BusinessIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Información Contrato</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Información General
-                            </h6>
-                            <div className="row">
-                                <div className="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Nombre Contrato</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.nombre_contrato}
-                                    </h6>
-                                </div>
-                                <div className="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">API</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.API}
-                                    </h6>
-                                </div>
-                                <div className="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Proyecto</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.proyecto}
-                                    </h6>
-                                </div>
-                                <div className="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Fecha Inicio</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{formatDate(contract.fecha_inicio)}
-                                    </h6>
-                                </div>
-                                <div className="col-sm-6">
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">Fecha Término</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{formatDate(contract.fecha_fin)}
-                                    </h6>
-                                </div>
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardEECCContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv19}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <ContentPasteGoIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Encargados EECC</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Encargados EECC
-                            </h6>
-                            <div className="row">
-
-                                {contract.encargadoContratista?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardRevisoresPYCContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <ContentPasteSearchIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Revisores P&C</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores P&C
-                            </h6>
-                            <div className="row">
-
-                                {contract.revisorPYC?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-                                <div className="col-sm-6" style={{ borderTop: '1px solid rgb(224, 224, 224)', marginTop: '2rem', }}>
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px', marginTop: '0.5rem' }} className="">Revisión Obligatoria</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.revisorPYCRequired ? 'Si' : 'No'}
-                                    </h6>
-                                </div>
-
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardRevisoresCCContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <ContentPasteSearchIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Revisores CC</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Construcción
-                            </h6>
-                            <div className="row">
-
-                                {contract.revisorCC?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-
-                                <div className="col-sm-6" style={{ borderTop: '1px solid rgb(224, 224, 224)', marginTop: '2rem', }}>
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px', marginTop: '0.5rem' }} className="">Revisión Obligatoria</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.revisorCCRequired ? 'Si' : 'No'}
-                                    </h6>
-                                </div>
-
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardRevisoresRRLLContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <ContentPasteSearchIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Revisores RRLL</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Relaciones Laborales
-                            </h6>
-                            <div className="row">
-
-                                {contract.revisorRRLL?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-                                <div className="col-sm-6" style={{ borderTop: '1px solid rgb(224, 224, 224)', marginTop: '2rem', }}>
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px', marginTop: '0.5rem' }} className="">Revisión Obligatoria</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.revisorRRLLRequired ? 'Si' : 'No'}
-                                    </h6>
-                                </div>
-
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardRevisoresOtroContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv20}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <ContentPasteSearchIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Revisores Otros</h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Revisores Otra Área
-                            </h6>
-                            <div className="row">
-
-                                {contract.revisorOtraArea?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-                                <div className="col-sm-6" style={{ borderTop: '1px solid rgb(224, 224, 224)', marginTop: '2rem', }}>
-                                    <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px', marginTop: '0.5rem' }} className="">Revisión Obligatoria</p>
-                                    <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{contract.revisorOtraAreaRequired ? 'Si' : 'No'}
-                                    </h6>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-    const cardAprobadorContract = () => {
-        return (
-            <div className="card user-card-full" style={styles.cardDiv15}>
-                <Grid container style={styles.cardDiv16}>
-                    <Grid item xs={4} md={4} lg={4} style={styles.cardDiv21}>
-                        <Grid style={styles.cardDiv18}>
-                            <Grid sx={{ mb: '25px' }}>
-                                <AssignmentTurnedInIcon sx={{ verticalAlign: 'middle', width: '65px', height: '65px' }} />
-                            </Grid>
-                            <h6 style={{ fontWeight: '600', fontSize: '14px' }}>Aprobadores </h6>
-                            <p style={{ fontSize: '20px' }}>{contract.DEN}</p>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={8} md={8} lg={8} >
-                        <div style={{ padding: '1.25rem' }} className="card-block">
-                            <h6 style={{ borderBottom: '1px solid #e0e0e0', fontWeight: 600, marginBottom: '40px', paddingBottom: '10px', fontSize: '15px' }} className="">Aprobadores
-                            </h6>
-                            <div className="row">
-
-                                {contract.aprobadorCodelco?.map((encargado, index) => (
-                                    <div className="col-sm-6" key={index}>
-                                        <p style={{ lineHeight: '25px', fontWeight: '400', marginBottom: '7px', fontSize: '15px' }} className="">{encargado.name}</p>
-                                        <h6 style={{ color: '#919aa3', fontWeight: '400', marginBottom: '7px', fontSize: '14px' }} className="">{encargado.email}
-                                        </h6>
-                                    </div>
-                                ))}
-
-                            </div>
-
-                        </div>
-                    </Grid>
-                </Grid>
-            </div>)
-    };
-
-    const items = [
-        {
-            name: "cardInfoContract",
-        },
-        {
-            name: "cardEECCContract",
-        },
-        {
-            name: "cardRevisoresPYCContract",
-        },
-        {
-            name: "cardRevisoresCCContract",
-        },
-        {
-            name: "cardRevisoresRRLLContract",
-        },
-        {
-            name: "cardRevisoresOtroContract",
-        },
-        {
-            name: "cardAprobadorContract",
-        }
-    ]
-
-    const Item = (item) => {
-        const name = item.item.name;
-
-        if (name === "cardInfoContract") {
-            return cardInfoContract();
-        } else if (name === "cardEECCContract") {
-            return cardEECCContract();
-        } else if (name === "cardRevisoresPYCContract") {
-            return cardRevisoresPYCContract();
-        } else if (name === "cardRevisoresCCContract") {
-            return cardRevisoresCCContract();
-        } else if (name === "cardRevisoresRRLLContract") {
-            return cardRevisoresRRLLContract();
-        } else if (name === "cardRevisoresOtroContract") {
-            return cardRevisoresOtroContract();
-        } else if (name === "cardAprobadorContract") {
-            return cardAprobadorContract();
-        }
-
-    }
-
+  
     return (
-        <Box className='container' sx={{ maxWidth: '95%' }}>
-            <div className="row my-5">
-                <div className="col-md-10 mx-auto">
-                    <div className="card">
-                        <div className="card-body">
-                            <h2 className="text-center mt-2" style={{ marginTop: '1rem' }}>Estatus General Daily Report </h2>
-                            <h3 className="text-center mt-2" style={{ marginTop: '0rem', color:'#6f6f6f' }}>{contract.nombre_contrato} </h3>
-                            <div style={{ display: 'flex', justifyContent: 'center' }}></div>
-
-                            {cardsStatusDailys()}
-                            <Grid container sx={{ mt: '1rem' }} >
-                                <Grid className=' ' sx={{ mt: '3rem' }} item xs={12} md={7} lg={8}>
-                                    <h3 className="text-center mt-2" style={{ marginBottom: '0.5rem' }}> Calendario </h3>
-                                    {calendario()}
-                                </Grid>
-                                <Grid className=' ' sx={{ mt: '3rem', mb: '3rem' }} item xs={12} md={5} lg={4}>
-                                    <h3 className="text-center mt-2" style={{ marginBottom: '0rem' }}> Últimas Actividades </h3>
-                                    {listActivities()}
-                                </Grid>
-
-                            </Grid>
-                            <Grid container sx={{ mt: '1rem' }} >
-                                <Grid className='dd ' sx={{ mt: '3rem' }} item xs={12} md={8} lg={8}>
-                                    <h3 className="text-center mt-2" style={{ marginBottom: '0rem' }}> Lista Dailys </h3>
-                                    <DailysTable dailys={dailys} />
-                                </Grid>
-                                <Grid className='dd ' sx={{ mt: '3rem' }} item xs={12} md={4} lg={4}>
-                                    <h3 className="text-center mt-2" style={{ marginBottom: '1rem' }}> Información Contrato </h3>
-                                    <Carousel
-
-                                        autoPlay={false} // Deshabilita el avance automático
-                                        navButtonsAlwaysVisible={true}
-                                    >
-                                        {
-                                            items.map((item, i) => <Item key={i} item={item} />)
+        <Box>
+            <header className="masthead">
+                <div className="container d-flex h-100 align-items-center">
+                    <div style={{ textAlign: 'center' }} className=" center-vertical mx-auto text-center">
+                        <h1 style={{ marginBlockStart: '0em' }}>AG ANALYTICS</h1>
+                        <Box display="flex" justifyContent="center">
+                            <h2 className="text-white mt-2 mb-5" style={{ marginBlockStart: '0em', color: 'white', fontWeight: 500, fontFamily: 'serif', letterSpacing: '0.0625em' }}>
+                                The Power of Data
+                            </h2>
+                        </Box>
+                        <Box display="flex" justifyContent="center">
+                            <Tooltip title="Aprobar Daily Report" sx={{
+                                m: '2rem', maxWidth: ' 300px', padding: '1.25rem 2rem', letterSpacing: '.15rem',
+                            }}>
+                                <Button
+                                    id="aprobarButton"
+                                    style={{ backgroundColor: '#64a19d' }}
+                                    variant="contained"
+                                    onClick={() => {
+                                        if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
+                                            aprobarDaily();
                                         }
-                                    </Carousel>
-                                </Grid>
-                            </Grid>
-
-
-
-
-
-                        </div>
+                                    }}
+                                >
+                                    NOSOTROS
+                                </Button>
+                            </Tooltip>
+                        </Box>
 
                     </div>
                 </div>
-            </div>
+            </header>
+            <section id="about" className="about-section text-center">
+                <div className="container">
+                    <div className="row">
+                        <Grid container spacing={1}>
+                            <Grid item lg={2}>
+                            </Grid>
+                            <Grid item lg={8}>
+                                <h1 className="text-white mb-4" style={{ color: '#d9d9d9', fontFamily: 'inherit', fontSize: '35px' }}>Nuestra empresa</h1>
+                                <p className="text-white" style={{ color: '#d9d9d9', marginBlockStart: '1rem', fontFamily: 'inherit', marginBottom: '1rem' }}>Somos una empresa especializada en Transformación Digital con enfoque en Analítica de Datos e Inteligencia de Negocios. Ofrecemos soluciones tecnológicas innovadoras que optimizan la operación y toma de decisiones de nuestros clientes. Nuestro equipo multidisciplinario, con expertos en desarrollo de software, analítica y gestión de proyectos, impulsa el crecimiento a través de soluciones personalizadas. Nos especializamos en plataformas a medida, integración de sistemas y analítica avanzada, abordando desde la automatización de procesos hasta el análisis predictivo. En AG Analytics, creamos el futuro digital de nuestros clientes como socios estratégicos.
+                                </p>
+                            </Grid>
+                            <Grid item lg={2}>
+                            </Grid>F
+                        </Grid>
+                    </div>
+                    <img src={tecnologiaImg} className="img-fluid" alt="" />
+
+                </div>
+            </section>
+            <section id="services" className="services-section bg-light" style={{ marginBottom: '8rem' }}>
+                <Box className="" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginTop: '80px', height: '100%' }}>
+                    <h2 className="text-white mb-4" style={{ color: 'rgb(58 58 58)', fontFamily: 'inherit', fontSize: '35px' }}>Nuestros Servicios</h2>
+                </Box>
+                <Box className="" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginTop: '50px', height: '100%' }}>
+                    <Grid container spacing={1}>
+                        <Grid item lg={2}></Grid>
+                        <Grid item lg={8}>
+                            <Grid container spacing={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                <Grid item lg={6} xs={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                    <img className="img-fluid" src={DTSimg} alt="" style={{ maxHeight: '100%', maxWidth: '100%' }} />
+                                </Grid>
+                                <Grid item lg={6} xs={12}>
+                                    <div className="blackbg text-center h-100 project">
+                                        <div className="d-flex h-100">
+                                            <div className="project-text w-100 my-auto text-center">
+                                                <h4 style={{ fontSize: '20px', marginBlockEnd: '10px' }} className="text-white">DTS</h4>
+                                                <p style={{ color: '#rgb(131 130 130)', textAlign: 'justify' }} className="mb-0 text-white-50 text-lg-left">
+                                                    "Daily Track System" es un Sistema de reportabilidad y analítica diaria, que permite a los usuarios, llevar un control del personal, maquinarias y actividades diarias,  ademas de una gran flexibilidad a la hora de configurar la información necesaria a llenar, permitiendo acomodarse a las distintas necesidades y estandares de las empresas.
+                                                </p>
+                                                <Tooltip title="Aprobar Daily Report" sx={{
+                                                    m: '2rem', maxWidth: ' 300px', padding: '0.5rem 1rem', letterSpacing: '.15rem',
+                                                }}>
+                                                    <Button
+                                                        id="aprobarButton"
+                                                        style={{ backgroundColor: '#64a19d' }}
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
+                                                                aprobarDaily();
+                                                            }
+                                                        }}
+                                                    >
+                                                        IR A DTS
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item lg={2}></Grid>
+                    </Grid>
+                </Box>
+                <Box className="" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center', marginTop: '10px', height: '100%' }}>
+                    <Grid container spacing={1}>
+                        <Grid item lg={2}></Grid>
+                        <Grid item lg={8}>
+                            <Grid container spacing={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                <Grid item lg={6} xs={12} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                                    <img className="img-fluid" src={WTSimg} alt="" style={{ maxHeight: '100%', maxWidth: '100%' }} />
+                                </Grid>
+                                <Grid item lg={6} xs={12}>
+                                    <div className="blackbg text-center h-100 project">
+                                        <div className="d-flex h-100">
+                                            <div className="project-text w-100 my-auto text-center">
+                                                <h4 style={{ fontSize: '20px', marginBlockEnd: '10px' }} className="text-white">WTS</h4>
+                                                <p style={{ color: '#rgb(131 130 130)', textAlign: 'justify' }} className="mb-0 text-white-50 text-lg-left">
+                                                    "Weekly Track System" es un Sistema de reportabilidad y analítica Semanal, que permite a los usuarios, llevar un control de los avances de la obra de un proyecto.
+                                                </p>
+                                                <Tooltip title="Aprobar Daily Report" sx={{
+                                                    m: '2rem', maxWidth: ' 300px', padding: '0.5rem 1rem', letterSpacing: '.15rem',
+                                                }}>
+                                                    <Button
+                                                        id="aprobarButton"
+                                                        style={{ backgroundColor: '#64a19d' }}
+                                                        variant="contained"
+                                                        onClick={() => {
+                                                            if (window.confirm('Al confirmar, se declará aprobado el Daily Report. ¿Estás seguro de querer continuar?')) {
+                                                                aprobarDaily();
+                                                            }
+                                                        }}
+                                                    >
+                                                        PROXIMAMENTE
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item lg={2}></Grid>
+                    </Grid>
+                </Box>
+
+            </section>
+
+            <section id="signup" className="signup-section">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-md-10 col-lg-8 mx-auto text-center">
+
+                            <EmailIcon sx={{ color: 'white', fontSize: '50px' }} />
+                            <h2 style={{ color: 'white', fontSize: '30px', fontFamily: 'inherit', fontWeight: 400 }} className="text-white mb-5">Envíennos un correo!</h2>
+
+                            <Tooltip title="Aprobar Daily Report" sx={{
+                                m: '2rem', maxWidth: ' 300px', padding: '1.25rem 2rem', letterSpacing: '.15rem',
+                            }}>
+                                <Button
+                                    id="aprobarButton"
+                                    style={{ backgroundColor: '#64a19d' }}
+                                    variant="contained"
+                                >
+                                    CONTACTO
+                                </Button>
+                            </Tooltip>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section className="contact-section bg-black" style={{ paddingBottom: '1rem' }}>
+                <div className="container">
+
+                    <Grid container spacing={4}>
+
+                        <Grid item lg={4} xs={12} md={4} >
+                            <div className="card py-4 h-100" style={{maxHeight:'230px'}}>
+                                <div className="card-body text-center">
+
+                                    <ContactMailIcon sx={{ color: '#64a19d', fontSize: '30px' }} />
+                                    <h4 className="text-uppercase m-0">Dirección</h4>
+                                    <hr className="my-4" />
+                                    <div className="small text-black-50">Santiago, Chile</div>
+                                </div>
+                            </div>
+                        </Grid>
+
+                        <Grid item lg={4} xs={12} md={4}>
+
+                            <div className="card py-4 h-100" style={{maxHeight:'230px'}}>
+                                <div className="card-body text-center">
+                                    <EmailIcon sx={{ color: '#64a19d', fontSize: '30px' }} />
+                                    <h4 className="text-uppercase m-0">Email</h4>
+                                    <hr className="my-4" />
+                                    <div className="small text-black-50">
+                                        <a href="#">tpoblete@aganalytics.cl</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </Grid>
+
+                        <Grid item lg={4} xs={12} md={4}>
+
+                            <div className="card py-4 h-100" >
+                                <div className="card-body text-center">
+                                    <ContactPhoneIcon sx={{ color: '#64a19d', fontSize: '30px' }} />
+                                    <h4 className="text-uppercase m-0">Teléfono</h4>
+                                    <hr className="my-4" />
+                                    <div className="small text-black-50">+56 967579214</div>
+                                </div>
+                            </div>
+                        </Grid>
+                    </Grid>
+
+                    <div className="social d-flex justify-content-center">
+                        <a href="#" className="mx-2">
+                            <FacebookIcon sx={{ color: '##686868', fontSize: '25px' }} />
+                        </a>
+                        <a href="#" className="mx-2">
+                            <InstagramIcon sx={{ color: '##686868', fontSize: '25px' }} />
+                        </a>
+                        <a href="#" className="mx-2">
+                            <LinkedInIcon sx={{ color: '##686868', fontSize: '25px' }} />
+                        </a>
+                    </div>
+
+                </div>
+            </section>
+
+            <footer className="bg-black small text-center text-white-50">
+                <div style={{ color: 'white' }} className="container">
+                    Copyright &copy; Todos los derechos reservados
+                </div>
+            </footer>
+
         </Box>
+
 
     )
 }

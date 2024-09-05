@@ -28,7 +28,7 @@ const DailyEnviado = () => {
                         <p>Esto quiere decir que puede faltar la revisión de otra área o la aprobación de Codelco.</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
-                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
+                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/homeDTS" startIcon={<CheckCircleIcon />}>
                             Volver al Inicio
                         </Button>
                         <Button component={Link} to={`/EECCverDaily/${daily_id}/${contract_id}`} startIcon={<AutoStoriesIcon />} style={{ backgroundColor: '#37474f' }} sx={{ margin: '2rem' }} variant="contained">
@@ -48,7 +48,7 @@ const DailyEnviado = () => {
                         <p>El Daily Report se encuentra aprobado.</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
-                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
+                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/homeDTS" startIcon={<CheckCircleIcon />}>
                             Volver al Inicio
                         </Button>
                         <Button component={Link} to={`/EECCverDaily/${daily_id}/${contract_id}`} startIcon={<AutoStoriesIcon />} style={{ backgroundColor: '#37474f' }} sx={{ margin: '2rem' }} variant="contained">

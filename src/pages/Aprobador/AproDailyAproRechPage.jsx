@@ -32,7 +32,7 @@ const DailyEnviado = () => {
                         <p>Si quiere ver la información del Daily Report presione en "Visualizar Daily Report".</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
-                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
+                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/homeDTS" startIcon={<CheckCircleIcon />}>
                             Volver al Inicio
                         </Button>
                         <Button component={Link} to={`/EECCverDaily/${daily_id}/${contract_id}`} startIcon={<AutoStoriesIcon />} style={{ backgroundColor: '#37474f' }} sx={{ margin: '2rem' }} variant="contained">
@@ -53,7 +53,7 @@ const DailyEnviado = () => {
                         <p>Se le comunicará a la empresa colaboradora del rechazo del Daily Report y se solicitará el reenvio del mismo</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
-                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
+                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/homeDTS" startIcon={<CheckCircleIcon />}>
                             Volver al Inicio
                         </Button>
                         <Button component={Link} to={`/EECCverDaily/${daily_id}/${contract_id}`} startIcon={<AutoStoriesIcon />} style={{ backgroundColor: '#37474f' }} sx={{ margin: '2rem' }} variant="contained">
@@ -74,7 +74,7 @@ const DailyEnviado = () => {
                         <p>Si quiere ver la información del Daily Report presione en "Visualizar Daily Report".</p>
                     </Box>
                     <Box display="flex" justifyContent="center" mt={4}>
-                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/" startIcon={<CheckCircleIcon />}>
+                        <Button variant="contained" sx={{ margin: '2rem' }} color="primary" component={Link} to="/homeDTS" startIcon={<CheckCircleIcon />}>
                             Volver al Inicio
                         </Button>
                         <Button component={Link} to={`/EECCverDaily/${daily_id}/${contract_id}`} startIcon={<AutoStoriesIcon />} style={{ backgroundColor: '#37474f' }} sx={{ margin: '2rem' }} variant="contained">

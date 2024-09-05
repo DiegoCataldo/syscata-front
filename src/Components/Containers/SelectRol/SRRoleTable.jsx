@@ -17,7 +17,7 @@ const ContractTable = ({ roles, page, rowsPerPage, totalCount, handleChangePage,
 
 
 
-        navigate(`/`);
+        navigate('/homeDTS');
     };
 
 

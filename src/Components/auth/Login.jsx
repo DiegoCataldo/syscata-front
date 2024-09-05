@@ -18,7 +18,7 @@ export default function Login() {
     const { accessToken, setAccessToken, setCurrentUser, currentUser } = useContext(AuthContext)
 
     useEffect(() => {
-        if (accessToken && currentUser?.role_id != null ) navigate('/')
+        if (accessToken && currentUser?.role_id != null ) navigate('/homeDTS')
     }, [accessToken])
 
     const handleSubmit = async (e) => {

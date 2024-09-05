@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import axios from 'axios'
 import './App.css'
 import Home from "./Components/Home"
+import HomeDTS from "./pages/DTS/Home/Home"
 import Header from "./Components/layouts/Header"
 import Register from "./Components/auth/Register"
 import { getConfig, BASE_URL } from "./helpers/config"
@@ -94,7 +95,8 @@ function App() {
             <BrowserRouter>
                 {currentUser && <Header />}
                 <Routes>
-                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/homeDTS" element={<ProtectedRoute><HomeDTS /></ProtectedRoute>} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
                     <Route path="/contracts" element={<ProtectedRouteSRContracts><ContractsPage /></ProtectedRouteSRContracts>} />
